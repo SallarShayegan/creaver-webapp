@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="login-container">
       <div class="center">
         <h1>Login</h1>
@@ -28,7 +28,7 @@ export default {
       const data = {
         password: this.password,
       };
-      if (this.username.match(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/)) {
+      if (this.username.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
         data.email = this.username;
       } else data.username = this.username;
       this.$store.dispatch('logPersonIn', data);
@@ -38,15 +38,16 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  min-height: auto;
+}
 .login-container {
-  padding-top: 20px;
+  padding: 20px 0 200px 0;
   display: grid;
   grid-template-columns: 25% 50% 25%;
-  grid-template-rows: auto auto auto;
   grid-gap: 10px;
 }
 input, .center {
-  display: block;
   grid-column-start: 2;
   grid-column-end: 3;
 }

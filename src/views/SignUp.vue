@@ -1,34 +1,36 @@
 <template>
-  <div>
-    <h1>Sign up</h1>
-    <div class="signup-container">
-      <div class="column-100">
-        <!-- stays invisible removed after closing //-->
-        <alert v-for="error in errors" :key="error.index" :message="error.message"/>
+  <div class="container">
+    <div>
+      <h1>Sign up</h1>
+      <div class="signup-container">
+        <div class="column-100">
+          <!-- stays invisible removed after closing //-->
+          <alert v-for="error in errors" :key="error.index" :message="error.message"/>
+        </div>
+        <input class="column" type="text" v-model="firstName" placeholder="First name"/>
+        <input class="column" type="text" v-model="lastName" placeholder="Last name"/>
+        <input class="column-100"
+              type="text"
+              v-model="email"
+              placeholder="Email address"
+              @input="deleteError('email')"/>
+        <input class="column-100"
+              type="text"
+              v-model="email2"
+              placeholder="Email address (repeat)"
+              @input="deleteError('email')"/>
+        <input class="column"
+              type="password"
+              v-model="password"
+              placeholder="Password"
+              @input="deleteError('password')"/>
+        <input class="column"
+              type="password"
+              v-model="password2"
+              placeholder="Password (repeat)"
+              @input="deleteError('password')"/>
+        <div class="column-100"><button @click="sendData">Sign up</button></div>
       </div>
-      <input class="column" type="text" v-model="firstName" placeholder="First name"/>
-      <input class="column" type="text" v-model="lastName" placeholder="Last name"/>
-      <input class="column-100"
-             type="text"
-             v-model="email"
-             placeholder="Email address"
-             @input="deleteError('email')"/>
-      <input class="column-100"
-             type="text"
-             v-model="email2"
-             placeholder="Email address (repeat)"
-             @input="deleteError('email')"/>
-      <input class="column"
-             type="password"
-             v-model="password"
-             placeholder="Password"
-             @input="deleteError('password')"/>
-      <input class="column"
-             type="password"
-             v-model="password2"
-             placeholder="Password (repeat)"
-             @input="deleteError('password')"/>
-      <div class="column-100"><button @click="sendData">Sign up</button></div>
     </div>
   </div>
 </template>

@@ -4,6 +4,8 @@ import Home from '../views/Home.vue';
 import SignUp from '../views/SignUp.vue';
 import Login from '../views/Login.vue';
 import Settings from '../views/Settings.vue';
+import Profile from '../views/Profile.vue';
+import store from '../store/index';
 
 Vue.use(Router);
 
@@ -30,6 +32,16 @@ export default new Router({
       path: '/settings',
       name: 'settings',
       component: Settings,
+    },
+    {
+      path: '/:username',
+      name: 'profile',
+      component: Profile,
+      beforeEnter: (to, from, next) => {
+        console.log(to.params.username);
+        store.dispatch('loadProfileData', to.params.username)
+          .then(() => next());
+      },
     },
   ],
 });

@@ -1,13 +1,19 @@
 <template>
-  <div>
-    <h1>Home</h1>
+  <div class="container">
+    <div>
+      <h1>Home</h1>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  components: {
 
-  },
 };
 </script>
+
+<style scoped>
+.container {
+  min-height: 500px;
+}
+</style>
