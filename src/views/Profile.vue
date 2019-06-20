@@ -3,7 +3,8 @@
     <div class="header">
       <div class="header-content">
         <div class="profile-image"
-             :style="`background-image:url('http://localhost:3000/images/profiles/${profileData.id}.jpg'`">
+             :style="`background-image:url('http://localhost:3000/images/profiles/${profileData.id ||
+             'nopic'}.jpg')`">
         </div>
         {{ profileData.data.username }}
       </div>
@@ -11,18 +12,38 @@
     <div class="mainbar">
       <div class="tracks">
         <h3 class="float-left">
-          {{ (uploadView) ? 'Add your track' : 'Resent tracks' }}
+          {{ (uploadView)       ? 'Add your track'
+           : (edittingTrack.id) ? 'Edit track'
+           :                      'Resent tracks'
+          }}
         </h3>
         <div class="float-right" style="margin-top:20px" v-if="isOwnProfile">
+          <button v-if="uploadView || edittingTrack.id"
+                  @click="uploadView = false; edittingTrack.id = ''"
+                  style="background: #ff6666; margin-right: 10px;">cancel</button>
           <button v-if="uploadView" @click="upload">Done</button>
-          <button v-else @click="uploadView = true">+ Add track</button>
+          <button v-if="edittingTrack.id" @click="editTrack">Save changes</button>
+          <button v-if="!uploadView && !edittingTrack.id"
+                  @click="uploadView = true">+ Add track</button>
         </div>
         <div style="clear:both"></div>
         <div v-if="uploadView">
-          <add-track @trackAdded="track = $event"/>
+          <track-input @input="newTrack = $event"/>
         </div>
-        <div v-else>
-          <track-preview/>
+        <div v-if="!uploadView && !edittingTrack.id">
+          <div v-for="track in profileData.tracks" :key="track">
+            <track-preview :id="track"
+                           @editClicked="edittingTrack.id = track"
+                           :editable="isOwnProfile"/>
+          </div>
+          <div v-if="!profileData.tracks || profileData.tracks.length < 1">
+            {{ profileData.data.first_name }} hasn't added any tracks yet!
+          </div>
+        </div>
+        <div v-if="edittingTrack.id">
+          <track-input @input="edittingTrack.newData = $event"
+                       :edittingTrack="edittingTrack.id"
+                       @removeClicked="deleteTrack"/>
         </div>
       </div>
     </div>
@@ -33,27 +54,32 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import TrackPreview from '../components/tracks/TrackPreview.vue';
-import AddTrack from '../components/tracks/AddTrack.vue';
+import TrackInput from '../components/tracks/TrackInput.vue';
 
 export default {
   components: {
     TrackPreview,
-    AddTrack,
+    TrackInput,
   },
   data() {
     return {
       uploadView: false,
-      track: {},
+      newTrack: {
+        trackData: {
+          artist_id: '',
+          data: {},
+        },
+      },
+      edittingTrack: { id: '' },
     };
   },
-  mounted() {
-    // this.$store.dispatch('loadProfileData', this.$route.params.username);
+  beforeCreate() {
+    this.$store.dispatch('loadProfileData', this.$route.params.username);
   },
   computed: {
-    profileData() {
-      return this.$store.state.profileData;
-    },
+    ...mapState(['profileData']),
     isOwnProfile() {
       if (this.$store.state.personalData.token) {
         return this.$route.params.username === this.$store.state.personalData.data.username;
@@ -64,6 +90,23 @@ export default {
   methods: {
     upload() {
       this.uploadView = false;
+      const data = new FormData();
+      data.append('track', this.newTrack.file);
+      this.newTrack.trackData.artist_id = this.profileData.id;
+      data.append('trackData', JSON.stringify(this.newTrack.trackData));
+      this.$store.dispatch('uploadTrack', data);
+    },
+    editTrack() {
+      this.$store.dispatch('editTrack', this.edittingTrack)
+        .then(() => {
+          this.edittingTrack = { id: '' };
+        });
+    },
+    deleteTrack() {
+      this.$store.dispatch('deleteTrack', { id: this.edittingTrack.id })
+        .then(() => {
+          this.edittingTrack = { id: '' };
+        });
     },
   },
 };

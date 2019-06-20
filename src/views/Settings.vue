@@ -74,7 +74,7 @@ export default {
     },
     addFile(event) {
       const image = new FormData();
-      image.append('file', event.target.files[0]);
+      image.append('profileImage', event.target.files[0]);
       this.profileImage = image;
     },
   },
