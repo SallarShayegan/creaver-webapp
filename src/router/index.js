@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from '../views/Home.vue';
-import SignUp from '../views/SignUp.vue';
-import Login from '../views/Login.vue';
-import Settings from '../views/Settings.vue';
-import Profile from '../views/Profile.vue';
+import Home from '@/views/Home.vue';
+import SignUp from '@/views/SignUp.vue';
+import Login from '@/views/Login.vue';
+import Settings from '@/views/Settings.vue';
+import Profile from '@/views/Profile.vue';
 
 Vue.use(Router);
 

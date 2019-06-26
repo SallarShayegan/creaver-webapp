@@ -3,23 +3,23 @@
     <input type="text"
            v-model="trackData.name"
            placeholder="Track name"
-           @change="sendEdittingData"/>
+           @change="sendData"/>
     <input type="text"
            v-model="trackData.discription"
            placeholder="Discription"
-           @change="sendEdittingData"/>
+           @change="sendData"/>
     <input type="text"
            v-model="trackData.place"
            placeholder="Creation place"
-           @change="sendEdittingData"/>
+           @change="sendData"/>
     <input type="text"
            v-model="trackData.genre"
            placeholder="Genre"
-           @change="sendEdittingData"/>
+           @change="sendData"/>
     <div v-if="!edittingTrack">
       Select track: <input type="file" @change="addTrack($event)"/>
     </div>
-    Select image: <input type="file" @change="image = $event.target.files[0]"/>
+    Select image: <input type="file" @change="addImage($event)"/>
     <div v-if="edittingTrack">
       <button @click="deleteTrack">Remove track</button>
     </div>
@@ -43,6 +43,7 @@ export default {
         genre: '',
       },
       image: {},
+      trackFile: {},
     };
   },
   created() {
@@ -58,13 +59,27 @@ export default {
     }
   },
   methods: {
-    sendEdittingData() {
+    sendData() {
+      // [Validation]
       if (this.edittingTrack) {
         this.$emit('input', this.trackData);
+      } else {
+        this.$emit('input', {
+          trackData: { data: this.trackData },
+          trackFile: this.trackFile,
+          image: this.image,
+        });
       }
     },
     addTrack(event) {
-      this.$emit('input', { trackData: { data: this.trackData }, file: event.target.files[0] });
+      // eslint-disable-next-line
+      this.trackFile = event.target.files[0];
+      this.sendData();
+    },
+    addImage(event) {
+      // eslint-disable-next-line
+      this.image = event.target.files[0];
+      this.sendData();
     },
     deleteTrack() {
       this.$emit('removeClicked');

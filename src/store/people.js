@@ -1,5 +1,3 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
 import Axios from 'axios';
 
 const axios = Axios.create({
@@ -7,9 +5,7 @@ const axios = Axios.create({
   timeout: 1000,
 });
 
-Vue.use(Vuex);
-
-export default new Vuex.Store({
+export default {
   state: {
     personalData: {
       data: {},
@@ -27,7 +23,6 @@ export default new Vuex.Store({
       login: [],
       settings: [],
     },
-    tracks: [],
     people: [],
   },
   mutations: {
@@ -46,18 +41,6 @@ export default new Vuex.Store({
     SET_PROFILE_DATA_TRACKS(state, payload) {
       // eslint-disable-next-line
       state.profileData.tracks.push(payload.id);
-    },
-    ADD_TRACK(state, payload) {
-      if (!state.tracks.includes(payload)) {
-        // eslint-disable-next-line
-        state.tracks.push(payload);
-      }
-    },
-  },
-  getters: {
-    getTrackById: state => (id) => {
-      const result = state.tracks.filter(track => track.id === id);
-      return result[0];
     },
   },
   actions: {
@@ -117,33 +100,5 @@ export default new Vuex.Store({
       });
     },
 
-    // eslint-disable-next-line
-    uploadTrack({ }, data) {
-      axios.post('tracks', data.data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-        .then((result) => {
-          axios.put(`/tracks/${result.data.id}/track-image`, data.image, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
-        });
-    },
-
-    // eslint-disable-next-line
-    editTrack({ }, data) {
-      axios.put(`tracks/${data.id}`, data.newData);
-    },
-
-    deleteTrack({ dispatch, state }, data) {
-      axios.delete(`tracks/${data.id}`)
-        .then(() => { dispatch('loadPersonsTracks', state.profileData.id); });
-    },
-
-    // eslint-disable-next-line
-    getTrackById({ commit }, id) {
-      axios.get(`tracks/${id}`)
-        .then(result => commit('ADD_TRACK', result.data));
-    },
-
   },
-});
+};

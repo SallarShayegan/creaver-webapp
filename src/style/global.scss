@@ -24,6 +24,20 @@ button:hover {
   background: $primary_dark;
 }
 
+.outlined {
+  border: 1px solid $primary;
+  color: $primary;
+  transition: color 0.3s;
+  transition: border-color 0.3s;
+  background: white;
+}
+
+.outlined:hover {
+  border: 1px solid $primary_dark;
+  color: $primary_dark;
+  background: white;
+}
+
 a {
   color: $primary_dark;
   text-decoration: none;

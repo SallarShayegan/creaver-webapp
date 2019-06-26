@@ -2,7 +2,9 @@
   <div class="track-preview" @click="play">
     <div class="thumbnail" :style="thumbnail"></div>
     {{ trackData.data.name }}
-    <span v-if="editable" class="edit-button" @click="$emit('editClicked')">
+    <span v-if="editable"
+          class="edit-button"
+          @click="editClicked = true; $emit('editClicked')">
       <i class="fas fa-pen"></i>
     </span>
     <div class="small-text" style="float:right">
@@ -27,7 +29,7 @@ export default {
   },
   data() {
     return {
-
+      editClicked: false,
     };
   },
   created() {
@@ -35,7 +37,9 @@ export default {
   },
   methods: {
     play() {
-      // window.location = `http://localhost:3000/tracks/${this.id}.mp3`;
+      if (!this.editClicked) {
+        window.location = `http://localhost:3000/tracks/${this.id}.mp3`;
+      }
     },
   },
   computed: {
@@ -43,8 +47,16 @@ export default {
       return this.$store.getters.getTrackById(this.id) || { data: {} };
     },
     thumbnail() {
-      // return `background-image:url('http://localhost:3000/images/tracks/${this.id || 'nopic'}.jpg')`;
-      return '';
+      const thumbnail = new Image();
+      thumbnail.src = `http://localhost:3000/images/tracks/${this.id}.jpg`;
+      if (thumbnail.width === 0) {
+        return 'background-image:url("./placeholders/track.jpg")';
+      }
+      return `background-image:url('${thumbnail.src}')`;
+      /*
+      return 'background-image: url("http://localhost:3000/images/tracks/nopic.jpg"),'
+           + `url('http://localhost:3000/images/tracks/${this.id}.jpg')`;
+      */
     },
   },
 };
@@ -64,6 +76,7 @@ export default {
 }
 .thumbnail {
   background: #f0f0f0;
+  background-size: 100%;
   width: 70px;
   height: 70px;
   margin-right: 10px;

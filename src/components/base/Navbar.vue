@@ -8,7 +8,7 @@
     </div>
     <div class="column right padding">
       <dropdown v-if="auth.token"
-                :text="`Welcome ${auth.data.first_name}!`"
+                :text="`Welcome ${auth.data.name}!`"
                 class="float-right dropdown">
         <router-link to="/settings">Settings</router-link>
         <router-link :to="`/${auth.data.username}`">Profile</router-link>
@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import Dropdown from './Dropdown.vue';
+import Dropdown from '@/components/base/Dropdown.vue';
 
 export default {
   components: {

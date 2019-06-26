@@ -31,7 +31,13 @@ export default {
       if (this.username.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
         data.email = this.username;
       } else data.username = this.username;
-      this.$store.dispatch('logPersonIn', data);
+      this.$store.dispatch('logPersonIn', data)
+        .then(() => this.$router.push(`/${this.username}`)); // needs modification
+    },
+  },
+  computed: {
+    userRoute() {
+      return this.$store.state.personalData.data.username;
     },
   },
 };

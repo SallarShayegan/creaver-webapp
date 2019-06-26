@@ -1,14 +1,6 @@
 <template>
   <div class="container">
-    <div class="header">
-      <div class="header-content">
-        <div class="profile-image"
-             :style="`background-image:url('http://localhost:3000/images/profiles/${profileData.id ||
-             'nopic'}.jpg')`">
-        </div>
-        {{ profileData.data.username }}
-      </div>
-    </div>
+    <profile-header :profileData="profileData" :isOwnProfile="isOwnProfile"/>
     <div class="mainbar">
       <div class="tracks">
         <h3 class="float-left">
@@ -48,20 +40,22 @@
       </div>
     </div>
     <div class="sidebar">
-      Monthly Listeners
+      0 monthly listeners
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import TrackPreview from '../components/tracks/TrackPreview.vue';
-import TrackInput from '../components/tracks/TrackInput.vue';
+import TrackPreview from '@/components/tracks/TrackPreview.vue';
+import TrackInput from '@/components/tracks/TrackInput.vue';
+import ProfileHeader from '@/components/profile/ProfileHeader.vue';
 
 export default {
   components: {
     TrackPreview,
     TrackInput,
+    ProfileHeader,
   },
   data() {
     return {
@@ -91,10 +85,12 @@ export default {
     upload() {
       this.uploadView = false;
       const data = new FormData();
-      data.append('track', this.newTrack.file);
+      data.append('track', this.newTrack.trackFile);
       this.newTrack.trackData.artist_id = this.profileData.id;
       data.append('trackData', JSON.stringify(this.newTrack.trackData));
-      this.$store.dispatch('uploadTrack', data);
+      const image = new FormData();
+      image.append('image', this.newTrack.image);
+      this.$store.dispatch('uploadTrack', { data, image });
     },
     editTrack() {
       this.$store.dispatch('editTrack', this.edittingTrack)
@@ -118,21 +114,9 @@ export default {
 .container {
   display: grid;
   grid-template-columns: auto 30%;
-  grid-template-rows: 120px auto;
+  grid-template-rows: 140px auto;
   min-height: 500px;
   padding: 0;
-}
-.header {
-  background: $primary;
-  grid-column-start: 1;
-  grid-column-end: 3;
-  display: grid;
-  grid-template-columns: auto 600px auto;
-}
-.header-content {
-  padding: 20px;
-  grid-column-start: 2;
-  grid-column-end: 3;
 }
 .sidebar {
   background: #f4f4f4;
@@ -145,13 +129,5 @@ export default {
   grid-column-end: 2;
   display: grid;
   grid-template-columns: auto 500px auto;
-}
-.profile-image {
-  float: left;
-  margin-right: 20px;
-  height: 60px;
-  width: 60px;
-  background-size: 100%;
-  border-radius: 50%;
 }
 </style>

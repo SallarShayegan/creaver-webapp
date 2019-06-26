@@ -7,8 +7,7 @@
           <!-- stays invisible removed after closing //-->
           <alert v-for="error in errors" :key="error.index" :message="error.message"/>
         </div>
-        <input class="column" type="text" v-model="firstName" placeholder="First name"/>
-        <input class="column" type="text" v-model="lastName" placeholder="Last name"/>
+        <input class="column-100" type="text" v-model="name" placeholder="Name"/>
         <input class="column-100"
               type="text"
               v-model="email"
@@ -36,7 +35,7 @@
 </template>
 
 <script>
-import Alert from '../components/base/Alert.vue';
+import Alert from '@/components/base/Alert.vue';
 
 export default {
   components: {
@@ -44,8 +43,7 @@ export default {
   },
   data() {
     return {
-      firstName: '',
-      lastName: '',
+      name: '',
       email: '',
       email2: '',
       password: '',
@@ -63,8 +61,7 @@ export default {
       }
       if (this.errors.length === 0) {
         const data = {
-          first_name: this.firstName,
-          last_name: this.lastName,
+          name: this.name,
           email: this.email,
           password: this.password,
         };

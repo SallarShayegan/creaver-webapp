@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <div>All rights reserved. Musection @2019</div>
+    <div>All rights reserved. MuteRave @2019</div>
   </div>
 </template>
 
