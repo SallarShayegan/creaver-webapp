@@ -31,7 +31,7 @@ export default {
   },
   computed: {
     auth() {
-      return this.$store.state.personalData;
+      return this.$store.state.people.personalData;
     },
   },
 };

@@ -26,6 +26,7 @@
 </template>
 
 <script>
+
 export default {
   props: {
     profileData: {
@@ -37,20 +38,49 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      image: '',
+    };
+  },
   computed: {
     profileImage() {
-      const image = new Image();
-      image.src = `http://localhost:3000/images/profiles/${this.profileData.id}.jpg`;
-      if (image.width === 0) {
+      if (!this.profileData.id) {
+        return '';
+      }
+      const src = `http://localhost:3000/images/profiles/${this.profileData.id}.jpg`;
+      /*
+      this.imageExists(src, function(imageExists) {
+        if(imageExists === true) {
+          return `background-image:url('${src}')`;
+        } else {
+          return 'background-image:url("./placeholders/profile.jpg")';
+        }
+      }); */
+      const img = new Image();
+      img.src = src;
+      if (img.width === 0) {
         return 'background-image:url("./placeholders/profile.jpg")';
       }
-      return `background-image:url('${image.src}')`;
+      return `background-image:url('${src}')`;
     },
   },
   methods: {
+    imageExists(imageUrl, callBack) {
+      const imageData = new Image();
+      imageData.onload = function () {
+        this.image = callBack(true);
+        console.log(this.image);
+      };
+      imageData.onerror = function () {
+        this.image = callBack(false);
+        console.log(this.image);
+      };
+      imageData.src = imageUrl;
+    },
     follow() {
       this.$store.dispatch('follow', {
-        follower_id: this.$store.state.personalData.id,
+        follower_id: this.$store.state.people.personalData.id,
         following_id: this.profileData.id,
       });
     },

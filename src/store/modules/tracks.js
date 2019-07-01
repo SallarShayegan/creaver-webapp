@@ -6,6 +6,7 @@ const axios = Axios.create({
 });
 
 export default {
+  namespaced: true,
   state: {
     tracks: [],
   },

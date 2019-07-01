@@ -33,7 +33,7 @@ export default {
     };
   },
   created() {
-    this.$store.dispatch('getTrackById', this.id);
+    this.$store.dispatch('tracks/getTrackById', this.id);
   },
   methods: {
     play() {
@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     trackData() {
-      return this.$store.getters.getTrackById(this.id) || { data: {} };
+      return this.$store.getters['tracks/getTrackById'](this.id) || { data: {} };
     },
     thumbnail() {
       const thumbnail = new Image();

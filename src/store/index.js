@@ -1,15 +1,22 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Axios from 'axios';
-
+// import Axios from 'axios';
+import people from './modules/people';
+import tracks from './modules/tracks';
+/*
 const axios = Axios.create({
   baseURL: 'http://localhost:3000/api/',
   timeout: 1000,
 });
-
+*/
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules: {
+    people,
+    tracks,
+  },
+  /*
   state: {
     personalData: {
       data: {},
@@ -101,7 +108,7 @@ export default new Vuex.Store({
     },
 
     // eslint-disable-next-line
-    follow({ }, data) {
+    follow({ }, data) {
       axios.put(`people/${data.following_id}/add-follower`, { follower_id: data.follower_id })
         .then(() => {
           axios.put(`people/${data.follower_id}/add-following`, { following_id: data.following_id })
@@ -130,7 +137,7 @@ export default new Vuex.Store({
     },
 
     // eslint-disable-next-line
-    editTrack({ }, data) {
+    editTrack({ }, data) {
       axios.put(`tracks/${data.id}`, data.newData);
     },
 
@@ -145,5 +152,5 @@ export default new Vuex.Store({
         .then(result => commit('ADD_TRACK', result.data));
     },
 
-  },
+  }, */
 });

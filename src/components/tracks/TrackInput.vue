@@ -48,9 +48,9 @@ export default {
   },
   created() {
     if (this.edittingTrack) {
-      this.$store.dispatch('getTrackById', this.edittingTrack)
+      this.$store.dispatch('tracks/getTrackById', this.edittingTrack)
         .then(() => {
-          const trackData = this.$store.getters.getTrackById(this.edittingTrack).data;
+          const trackData = this.$store.getters.tracks.getTrackById(this.edittingTrack).data;
           this.trackData.name = trackData.name;
           this.trackData.discription = trackData.discription;
           this.trackData.genre = trackData.genre;

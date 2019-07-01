@@ -70,13 +70,13 @@ export default {
     };
   },
   beforeCreate() {
-    this.$store.dispatch('loadProfileData', this.$route.params.username);
+    this.$store.dispatch('people/loadProfileData', this.$route.params.username);
   },
   computed: {
-    ...mapState(['profileData']),
+    ...mapState({ profileData: state => state.people.profileData }),
     isOwnProfile() {
-      if (this.$store.state.personalData.token) {
-        return this.$route.params.username === this.$store.state.personalData.data.username;
+      if (this.$store.state.people.personalData.token) {
+        return this.$route.params.username === this.$store.state.people.personalData.data.username;
       }
       return false;
     },
@@ -90,16 +90,16 @@ export default {
       data.append('trackData', JSON.stringify(this.newTrack.trackData));
       const image = new FormData();
       image.append('image', this.newTrack.image);
-      this.$store.dispatch('uploadTrack', { data, image });
+      this.$store.dispatch('tracks/uploadTrack', { data, image });
     },
     editTrack() {
-      this.$store.dispatch('editTrack', this.edittingTrack)
+      this.$store.dispatch('tracks/editTrack', this.edittingTrack)
         .then(() => {
           this.edittingTrack = { id: '' };
         });
     },
     deleteTrack() {
-      this.$store.dispatch('deleteTrack', { id: this.edittingTrack.id })
+      this.$store.dispatch('tracks/deleteTrack', { id: this.edittingTrack.id })
         .then(() => {
           this.edittingTrack = { id: '' };
         });

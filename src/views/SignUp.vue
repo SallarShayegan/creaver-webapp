@@ -65,7 +65,7 @@ export default {
           email: this.email,
           password: this.password,
         };
-        this.$store.dispatch('addNewPerson', data)
+        this.$store.dispatch('people/addNewPerson', data)
           .then(() => {})
           .catch(err => this.errors.push({ message: err }));
       }

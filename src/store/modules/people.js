@@ -6,6 +6,7 @@ const axios = Axios.create({
 });
 
 export default {
+  namespaced: true,
   state: {
     personalData: {
       data: {},
@@ -17,6 +18,7 @@ export default {
       tracks: [],
       following: [],
       followers: [],
+      hasProfilePic: false,
     },
     errors: {
       signUp: [],
@@ -99,6 +101,14 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },
+
+    /*
+    hasProfilePic({ state }, id) {
+      axios.get(`http://localhost:3000/images/profiles/${id}.jpg`)
+        .then(result => state.profileData.hasProfilePic = true)
+        .catch(err => state.profileData.hasProfilePic = false);
+    },
+    */
 
   },
 };

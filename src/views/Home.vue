@@ -15,11 +15,11 @@
 <script>
 export default {
   created() {
-    this.$store.dispatch('getAllPersonalData');
+    this.$store.dispatch('people/getAllPersonalData');
   },
   computed: {
     people() {
-      return this.$store.state.people;
+      return this.$store.state.people.people;
     },
   },
 };

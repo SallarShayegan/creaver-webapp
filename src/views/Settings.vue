@@ -64,9 +64,9 @@ export default {
   },
   methods: {
     saveChanges() {
-      this.$store.dispatch('changePersonalData', this.editingData);
+      this.$store.dispatch('people/changePersonalData', this.editingData);
       if (this.profileImage) {
-        this.$store.dispatch('changeProfileImage', {
+        this.$store.dispatch('people/changeProfileImage', {
           id: this.editingData.id,
           profileImage: this.profileImage,
         });
@@ -107,9 +107,9 @@ export default {
   },
   computed: {
     signedIn() {
-      if (this.$store.state.personalData.token != null) {
+      if (this.$store.state.people.personalData.token != null) {
         // eslint-disable-next-line
-        this.editingData = JSON.parse(JSON.stringify(this.$store.state.personalData));
+        this.editingData = JSON.parse(JSON.stringify(this.$store.state.people.personalData));
         return true;
       }
       return false;
