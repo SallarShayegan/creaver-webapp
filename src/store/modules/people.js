@@ -32,6 +32,9 @@ export default {
       // eslint-disable-next-line
       state.people = payload;
     },
+    ADD_PERSONS_DATA(state, payload) {
+      state.people.push(payload);
+    },
     SET_PERSONAL_DATA(state, payload) {
       // eslint-disable-next-line
       state.personalData = payload;
@@ -45,11 +48,26 @@ export default {
       state.profileData.tracks.push(payload.id);
     },
   },
+  getters: {
+
+    getPersonalDataById: state => (id) => {
+      const result = state.people.filter(person => person.id === id);
+      if (result.length < 1) return null;
+      return result[0];
+    },
+
+  },
   actions: {
 
     getAllPersonalData({ commit }) {
       axios.get('people')
         .then(result => commit('SET_ALL_PERSONAL_DATA', result.data))
+        .catch(err => console.log(err));
+    },
+
+    getPersonalDataById({ commit }, id) {
+      axios.get(`people/${id}`)
+        .then(result => commit('ADD_PERSONS_DATA', result.data))
         .catch(err => console.log(err));
     },
 
@@ -90,6 +108,16 @@ export default {
       axios.put(`people/${data.following_id}/add-follower`, { follower_id: data.follower_id })
         .then(() => {
           axios.put(`people/${data.follower_id}/add-following`, { following_id: data.following_id })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
+    },
+
+    // eslint-disable-next-line
+    unfollow({ }, data) {
+      axios.put(`people/${data.following_id}/remove-follower`, { follower_id: data.follower_id })
+        .then(() => {
+          axios.put(`people/${data.follower_id}/remove-following`, { following_id: data.following_id })
             .catch(err => console.log(err));
         })
         .catch(err => console.log(err));

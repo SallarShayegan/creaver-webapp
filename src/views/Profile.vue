@@ -1,43 +1,39 @@
 <template>
   <div class="container">
-    <profile-header :profileData="profileData" :isOwnProfile="isOwnProfile"/>
+    <profile-header :profileData="profileData"
+                    :isOwnProfile="isOwnProfile"
+                    @editClicked="editProfile"
+                    @showFollowing="followView = true; followType = 'following'"
+                    @showFollowers="followView = true; followType = 'followers'"/>
     <div class="mainbar">
-      <div class="tracks">
-        <h3 class="float-left">
-          {{ (uploadView)       ? 'Add your track'
-           : (edittingTrack.id) ? 'Edit track'
-           :                      'Resent tracks'
-          }}
-        </h3>
+      <div class="tracks" v-if="tracksView">
+        <h3 class="float-left">Resent tracks</h3>
         <div class="float-right" style="margin-top:20px" v-if="isOwnProfile">
-          <button v-if="uploadView || edittingTrack.id"
-                  @click="uploadView = false; edittingTrack.id = ''"
-                  style="background: #ff6666; margin-right: 10px;">cancel</button>
-          <button v-if="uploadView" @click="upload">Done</button>
-          <button v-if="edittingTrack.id" @click="editTrack">Save changes</button>
-          <button v-if="!uploadView && !edittingTrack.id"
-                  @click="uploadView = true">+ Add track</button>
+          <button @click="uploadView = true">+ Add track</button>
         </div>
         <div style="clear:both"></div>
-        <div v-if="uploadView">
-          <track-input @input="newTrack = $event"/>
-        </div>
-        <div v-if="!uploadView && !edittingTrack.id">
+        <div>
           <div v-for="track in profileData.tracks" :key="track">
             <track-preview :id="track"
-                           @editClicked="edittingTrack.id = track"
+                           @editClicked="editingTrack = track"
                            :editable="isOwnProfile"/>
           </div>
           <div v-if="!profileData.tracks || profileData.tracks.length < 1">
-            {{ profileData.data.first_name }} hasn't added any tracks yet!
+            {{ profileData.data.name }} hasn't added any tracks yet!
           </div>
         </div>
-        <div v-if="edittingTrack.id">
-          <track-input @input="edittingTrack.newData = $event"
-                       :edittingTrack="edittingTrack.id"
-                       @removeClicked="deleteTrack"/>
-        </div>
       </div>
+      <upload-track v-if="uploadView"
+                    :artistId="profileData.id"
+                    @close="uploadView = false"/>
+      <edit-track v-if="editingTrack"
+                  :id="editingTrack"
+                  @close="editingTrack = ''"/>
+      <edit-profile v-if="editProfileView" @close="editProfileView = false"/>
+      <people v-if="followView"
+              :type="followType"
+              :profileData="profileData"
+              @close="followView = false"/>
     </div>
     <div class="sidebar">
       0 monthly listeners
@@ -48,25 +44,28 @@
 <script>
 import { mapState } from 'vuex';
 import TrackPreview from '@/components/tracks/TrackPreview.vue';
-import TrackInput from '@/components/tracks/TrackInput.vue';
+import UploadTrack from '@/components/profile/UploadTrack.vue';
+import EditTrack from '@/components/profile/EditTrack.vue';
 import ProfileHeader from '@/components/profile/ProfileHeader.vue';
+import EditProfile from '@/components/profile/EditProfile.vue';
+import People from '@/components/profile/People.vue';
 
 export default {
   components: {
     TrackPreview,
-    TrackInput,
+    UploadTrack,
+    EditTrack,
     ProfileHeader,
+    EditProfile,
+    People,
   },
   data() {
     return {
       uploadView: false,
-      newTrack: {
-        trackData: {
-          artist_id: '',
-          data: {},
-        },
-      },
-      edittingTrack: { id: '' },
+      editingTrack: '',
+      editProfileView: false,
+      followView: false,
+      followType: '',
     };
   },
   beforeCreate() {
@@ -80,29 +79,18 @@ export default {
       }
       return false;
     },
+    tracksView() {
+      return !this.uploadView
+             && !this.editingTrack
+             && !this.editProfileView
+             && !this.followView;
+    },
   },
   methods: {
-    upload() {
+    editProfile() {
+      this.editProfileView = true;
       this.uploadView = false;
-      const data = new FormData();
-      data.append('track', this.newTrack.trackFile);
-      this.newTrack.trackData.artist_id = this.profileData.id;
-      data.append('trackData', JSON.stringify(this.newTrack.trackData));
-      const image = new FormData();
-      image.append('image', this.newTrack.image);
-      this.$store.dispatch('tracks/uploadTrack', { data, image });
-    },
-    editTrack() {
-      this.$store.dispatch('tracks/editTrack', this.edittingTrack)
-        .then(() => {
-          this.edittingTrack = { id: '' };
-        });
-    },
-    deleteTrack() {
-      this.$store.dispatch('tracks/deleteTrack', { id: this.edittingTrack.id })
-        .then(() => {
-          this.edittingTrack = { id: '' };
-        });
+      this.editingTrack = '';
     },
   },
 };

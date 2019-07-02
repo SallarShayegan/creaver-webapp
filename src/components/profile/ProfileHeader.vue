@@ -3,19 +3,28 @@
       <div class="header-content">
         <div class="profile-image" :style="profileImage">
         </div>
-        <div class="info">{{ profileData.data.name }}</div>
+        <div class="info">
+          <span style="color:#ffffff">{{ profileData.data.name }}</span>
+          <span class="small-text" style="margin-left:20px;">
+            {{ (profileData.data.city || '')
+            + (profileData.data.city ? ', ' : '')
+            + (profileData.data.country || '') }}
+          </span>
+        </div>
         <button v-if="isOwnProfile"
                 class="outlined"
-                @click="editProfile">Edit profile</button>
-        <button v-else class="outlined" @click="follow">Follow</button>
+                @click="$emit('editClicked')">Edit profile</button>
+        <button v-else class="outlined" @click="follow">
+          Follow{{ (followed) ? 'ed' : '' }}
+        </button>
         <div class="abo">
           <div class="follow"
                style="border-right: 1px solid #ffffff"
-               @click="showFollowing">
+               @click="$emit('showFollowing')">
                   {{ profileData.following.length }}<br>
                   <span class="small-text">Following</span>
           </div>
-          <div class="follow" @click="showFollowers">
+          <div class="follow" @click="$emit('showFollowers')">
             {{ profileData.followers.length }}<br>
             <span class="small-text">Followers</span>
           </div>
@@ -64,6 +73,12 @@ export default {
       }
       return `background-image:url('${src}')`;
     },
+    followed() {
+      return this.profileData.followers.filter(id => this.authId === id).length !== 0;
+    },
+    authId() {
+      return this.$store.state.people.personalData.id;
+    },
   },
   methods: {
     imageExists(imageUrl, callBack) {
@@ -79,19 +94,21 @@ export default {
       imageData.src = imageUrl;
     },
     follow() {
-      this.$store.dispatch('follow', {
-        follower_id: this.$store.state.people.personalData.id,
-        following_id: this.profileData.id,
-      });
-    },
-    showFollowers() {
-
-    },
-    showFollowing() {
-
-    },
-    editProfile() {
-
+      if (!this.authId) {
+        console.log('First sign in.'); // Error handling
+        return;
+      }
+      if (this.followed) {
+        this.$store.dispatch('people/unfollow', {
+          follower_id: this.authId,
+          following_id: this.profileData.id,
+        });
+      } else {
+        this.$store.dispatch('people/follow', {
+          follower_id: this.authId,
+          following_id: this.profileData.id,
+        });
+      }
     },
   },
 };
@@ -119,6 +136,7 @@ export default {
   width: 100px;
   background-size: 100%;
   border-radius: 50%;
+  box-shadow: 0px 0px 10px white;
 }
 .abo {
   float: right;

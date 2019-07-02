@@ -16,11 +16,11 @@
            v-model="trackData.genre"
            placeholder="Genre"
            @change="sendData"/>
-    <div v-if="!edittingTrack">
+    <div v-if="!editingTrack">
       Select track: <input type="file" @change="addTrack($event)"/>
     </div>
     Select image: <input type="file" @change="addImage($event)"/>
-    <div v-if="edittingTrack">
+    <div v-if="editingTrack">
       <button @click="deleteTrack">Remove track</button>
     </div>
   </div>
@@ -29,7 +29,7 @@
 <script>
 export default {
   props: {
-    edittingTrack: {
+    editingTrack: {
       default: '',
       type: String,
     },
@@ -47,10 +47,10 @@ export default {
     };
   },
   created() {
-    if (this.edittingTrack) {
-      this.$store.dispatch('tracks/getTrackById', this.edittingTrack)
+    if (this.editingTrack) {
+      this.$store.dispatch('tracks/getTrackById', this.editingTrack)
         .then(() => {
-          const trackData = this.$store.getters.tracks.getTrackById(this.edittingTrack).data;
+          const trackData = this.$store.getters['tracks/getTrackById'](this.editingTrack).data;
           this.trackData.name = trackData.name;
           this.trackData.discription = trackData.discription;
           this.trackData.genre = trackData.genre;
@@ -61,7 +61,7 @@ export default {
   methods: {
     sendData() {
       // [Validation]
-      if (this.edittingTrack) {
+      if (this.editingTrack) {
         this.$emit('input', this.trackData);
       } else {
         this.$emit('input', {
@@ -92,5 +92,6 @@ export default {
 input {
   display: block;
   margin-bottom: 10px;
+  min-width: 200px;
 }
 </style>

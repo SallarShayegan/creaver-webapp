@@ -38,6 +38,14 @@ button:hover {
   background: white;
 }
 
+.background-red {
+  background: $red;
+}
+
+.background-red:hover {
+  background: $red_dark;
+}
+
 a {
   color: $primary_dark;
   text-decoration: none;

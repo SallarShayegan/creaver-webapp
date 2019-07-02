@@ -21,6 +21,7 @@ export default {
   getters: {
     getTrackById: state => (id) => {
       const result = state.tracks.filter(track => track.id === id);
+      if (result.length < 1) return null;
       return result[0];
     },
   },
