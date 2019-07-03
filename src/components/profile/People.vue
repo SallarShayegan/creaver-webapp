@@ -8,7 +8,7 @@
     </div>
     <div style="clear:both"></div>
     <div v-for="person in list" :key="person">
-      <profile-preview :id="person"/>
+      <profile-preview :id="person" @click="showProfile($event)"/>
     </div>
   </div>
 </template>
@@ -31,9 +31,16 @@ export default {
       return [];
     },
   },
+  methods: {
+    showProfile(username) {
+      this.$emit('close');
+      this.$store.dispatch('people/loadProfileData', username)
+        .then(() => this.$router.push(`/${username}`));
+    },
+  },
 };
 </script>
 
-<style>
+<style scoped>
 
 </style>

@@ -101,6 +101,15 @@ textarea {
   float: left;
 }
 
+.profile-image {
+  float: left;
+  margin-right: 20px;
+  height: 100px;
+  width: 100px;
+  background-size: 100%;
+  border-radius: 50%;
+}
+
 @media screen and (max-width: 600px) {
   .container {
     display: grid;

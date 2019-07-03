@@ -1,8 +1,7 @@
 <template>
   <div class="header">
       <div class="header-content">
-        <div class="profile-image" :style="profileImage">
-        </div>
+        <div class="profile-image" :style="profileImage"></div>
         <div class="info">
           <span style="color:#ffffff">{{ profileData.data.name }}</span>
           <span class="small-text" style="margin-left:20px;">
@@ -130,12 +129,6 @@ export default {
   grid-column-end: 3;
 }
 .profile-image {
-  float: left;
-  margin-right: 20px;
-  height: 100px;
-  width: 100px;
-  background-size: 100%;
-  border-radius: 50%;
   box-shadow: 0px 0px 10px white;
 }
 .abo {

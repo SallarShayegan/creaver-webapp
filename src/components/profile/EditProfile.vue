@@ -40,7 +40,7 @@
       <div class="column-100">
         <button @click="$emit('close')"
                 class="background-red"
-                style="margin-right: 10px;">cancel</button>
+                style="margin-right: 10px;">Cancel</button>
         <button @click="saveChanges" class="margin-top">Save changes</button>
       </div>
     </div>
