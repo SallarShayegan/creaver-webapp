@@ -21,7 +21,7 @@
     </div>
     Select image: <input type="file" @change="addImage($event)"/>
     <div v-if="editingTrack">
-      <button @click="deleteTrack">Remove track</button>
+      <button @click="deleteTrack" class="background-red">Remove track</button>
     </div>
   </div>
 </template>

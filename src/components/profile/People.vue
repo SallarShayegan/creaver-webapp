@@ -4,7 +4,7 @@
     <div class="float-right" style="margin-top:20px">
       <button @click="$emit('close')"
               class="background-red"
-              style="margin-right: 10px;">close</button>
+              style="margin-right: 10px;">Close</button>
     </div>
     <div style="clear:both"></div>
     <div v-for="person in list" :key="person">

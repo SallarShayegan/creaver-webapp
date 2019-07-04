@@ -44,8 +44,8 @@ export default {
       }
     },
     emitClick() {
-      if (!this.followClicked) this.$emit('click', this.personsData.data.username)
-    }
+      if (!this.followClicked) this.$emit('click', this.personsData.data.username);
+    },
   },
   computed: {
     personsData() {
@@ -76,7 +76,7 @@ export default {
         return 'background-image:url("./placeholders/profile.jpg")';
       }
       return `background-image:url('${src}')`;
-    }
+    },
   },
 };
 </script>

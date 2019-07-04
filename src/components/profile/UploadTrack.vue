@@ -4,7 +4,7 @@
     <div class="float-right" style="margin-top:20px">
       <button @click="$emit('close')"
               class="background-red"
-              style="margin-right: 10px;">cancel</button>
+              style="margin-right: 10px;">Cancel</button>
       <button @click="upload">Done</button>
     </div>
     <div style="clear:both"></div>

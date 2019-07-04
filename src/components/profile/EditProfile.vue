@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="edit-profile">
     <h3>Edit profile</h3>
     <div>
       <input
@@ -30,13 +30,8 @@
             type="text"
             v-model="editingData.data.country"
             placeholder="Country"/>
-      <div class="column-100">
-        Profile picture: <input type="file" name="profileImage" @change="addFile($event)"/>
-      </div>
-      <div class="column" style="position: relative">
-        <div id="border" onclick=""></div>
-        <canvas id="canvas"></canvas>
-      </div>
+      <div class="margin-top">Select profile image:</div>
+      <image-input @imageAdded="profileImage = $event"/>
       <div class="column-100">
         <button @click="$emit('close')"
                 class="background-red"
@@ -48,7 +43,12 @@
 </template>
 
 <script>
+import ImageInput from '@/components/base/ImageInput.vue';
+
 export default {
+  components: {
+    ImageInput,
+  },
   data() {
     return {
       editingData: {},
@@ -66,39 +66,6 @@ export default {
       }
       this.$emit('close');
     },
-    addFile(event) {
-      const image = new Image();
-      const canvas = document.getElementById('canvas');
-      const border = document.getElementById('border');
-      canvas.style.display = 'block';
-      border.style.display = 'inherit';
-
-      image.onload = () => {
-        canvas.height = canvas.width * (image.height / image.width);
-        const canvas2 = canvas.getContext('2d');
-        canvas2.drawImage(image, 0, 0, canvas.width, canvas.height);
-        const size = (canvas.width > canvas.height) ? canvas.height : canvas.width;
-        border.style.height = `${size}px`;
-        border.style.width = `${size}px`;
-        const canvasFile = document.createElement('canvas');
-        const jpeg = new Image();
-
-        jpeg.onload = () => {
-          canvasFile.height = size;
-          canvasFile.width = size;
-          const canvasFile2 = canvasFile.getContext('2d');
-          canvasFile2.drawImage(jpeg, 0, 0, size, size, 0, 0, size, size);
-
-          canvasFile.toBlob((blob) => {
-            const imageFile = new FormData();
-            imageFile.append('profileImage', blob);
-            this.profileImage = imageFile;
-          });
-        };
-        jpeg.src = canvas.toDataURL('image/jpeg');
-      };
-      image.src = URL.createObjectURL(event.target.files[0]);
-    },
   },
   created() {
     this.editingData = JSON.parse(JSON.stringify(this.$store.state.people.personalData));
@@ -107,6 +74,9 @@ export default {
 </script>
 
 <style scoped>
+.edit-profile {
+  margin-bottom: 20px;
+}
 input {
   display: block;
   margin-top:10px;
