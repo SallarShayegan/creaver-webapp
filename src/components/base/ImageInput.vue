@@ -86,7 +86,6 @@ export default {
     startResize(event, type) {
       this.border.lastSize = this.border.size;
       this.resizing = type;
-      console.log(type);
       this.mouse.startX = event.clientX;
       this.mouse.startY = event.clientY;
       this.mouse.x = event.clientX;
@@ -101,6 +100,7 @@ export default {
     stopResize() {
       this.resizing = false;
       this.border.size = this.getBorderSize();
+      this.prepareImage();
     },
     startDrag(event) {
       this.border.lastLeft = this.border.left;
@@ -121,27 +121,7 @@ export default {
       this.dragging = false;
       this.border.left = this.getBorderX();
       this.border.top = this.getBorderY();
-
-      // Build cropped image:
-      const canvasFile = document.createElement('canvas');
-      const jpeg = new Image();
-
-      jpeg.onload = () => {
-        canvasFile.height = this.border.size;
-        canvasFile.width = this.border.size;
-        const canvasFile2 = canvasFile.getContext('2d');
-        canvasFile2.drawImage(jpeg, this.border.left, this.border.top,
-          this.border.size, this.border.size,
-          0, 0, this.border.size, this.border.size);
-
-        canvasFile.toBlob((blob) => {
-          const imageFile = new FormData();
-          imageFile.append('image', blob);
-          this.image = imageFile;
-          this.$emit('imageAdded', imageFile);
-        });
-      };
-      jpeg.src = this.canvas.src;
+      this.prepareImage();
     },
     getBorderX() {
       const { left } = document.getElementById('border').style;
@@ -171,14 +151,40 @@ export default {
         this.border.size = (canvas.width > canvas.height) ? canvas.height : canvas.width;
 
         this.canvas.src = canvas.toDataURL('image/jpeg');
+        this.prepareImage();
       };
       image.src = URL.createObjectURL(event.target.files[0]);
+    },
+    prepareImage() {
+      // Build cropped image:
+      const canvasFile = document.createElement('canvas');
+      const jpeg = new Image();
+
+      jpeg.onload = () => {
+        canvasFile.height = this.border.size;
+        canvasFile.width = this.border.size;
+        const canvasFile2 = canvasFile.getContext('2d');
+        canvasFile2.drawImage(jpeg, this.border.left, this.border.top,
+          this.border.size, this.border.size,
+          0, 0, this.border.size, this.border.size);
+
+        canvasFile.toBlob((blob) => {
+          const imageFile = new FormData();
+          imageFile.append('image', blob);
+          this.image = imageFile;
+          this.$emit('imageAdded', imageFile);
+        });
+      };
+      jpeg.src = this.canvas.src;
     },
   },
 };
 </script>
 
 <style scoped>
+input {
+  margin-bottom: 10px;
+}
 .canvas-container {
   position: relative;
   overflow: hidden;

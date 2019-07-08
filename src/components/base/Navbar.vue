@@ -11,7 +11,9 @@
                 :text="`Welcome ${auth.data.name}!`"
                 class="float-right dropdown">
         <router-link to="/settings">Settings</router-link>
-        <router-link :to="`/${auth.data.username}`">Profile</router-link>
+        <router-link :to="`/${auth.data.username}`">
+          <div @click="loadPersonalData">Profile</div>
+        </router-link>
       </dropdown>
       <div v-else class="float-right">
         <router-link to="/sign-up">Sign up</router-link>
@@ -32,6 +34,11 @@ export default {
   computed: {
     auth() {
       return this.$store.state.people.personalData;
+    },
+  },
+  methods: {
+    loadPersonalData() {
+      this.$store.dispatch('people/loadProfileData', this.auth.data.username);
     },
   },
 };

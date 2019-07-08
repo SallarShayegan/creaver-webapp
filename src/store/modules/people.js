@@ -5,6 +5,11 @@ const axios = Axios.create({
   timeout: 1000,
 });
 
+const placeholder = './placeholders/profile.jpg';
+function imageUrl(id) {
+  return `http://localhost:3000/images/profiles/${id}.jpg`;
+}
+
 export default {
   namespaced: true,
   state: {
@@ -13,7 +18,7 @@ export default {
       id: '',
     },
     profileData: {
-      data: {},
+      data: { imageUrl: placeholder },
       id: '',
       tracks: [],
       following: [],
@@ -29,11 +34,17 @@ export default {
   },
   mutations: {
     SET_ALL_PERSONAL_DATA(state, payload) {
+      payload.forEach(person => {
+        person.data.imageUrl = (person.data.hasImage) ? imageUrl(person.id) : placeholder;
+      });
       // eslint-disable-next-line
       state.people = payload;
     },
     ADD_PERSONS_DATA(state, payload) {
-      state.people.push(payload);
+      if (state.people.filter(person => payload.id === person.id).length === 0) {
+        payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+        state.people.push(payload);
+      }
     },
     SET_PERSONAL_DATA(state, payload) {
       // eslint-disable-next-line
@@ -41,7 +52,20 @@ export default {
     },
     SET_PROFILE_DATA(state, payload) {
       // eslint-disable-next-line
+      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+
+      // eslint-disable-next-line
       state.profileData = payload;
+    },
+    RESET_PROFILE_DATA(state) {
+      state.profileData =  {
+        data: { imageUrl: placeholder },
+        id: '',
+        tracks: [],
+        following: [],
+        followers: [],
+        hasProfilePic: false,
+      };
     },
     SET_PROFILE_DATA_TRACKS(state, payload) {
       // eslint-disable-next-line
@@ -129,14 +153,6 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
     },
-
-    /*
-    hasProfilePic({ state }, id) {
-      axios.get(`http://localhost:3000/images/profiles/${id}.jpg`)
-        .then(result => state.profileData.hasProfilePic = true)
-        .catch(err => state.profileData.hasProfilePic = false);
-    },
-    */
 
   },
 };

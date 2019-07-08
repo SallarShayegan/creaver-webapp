@@ -1,7 +1,8 @@
 <template>
   <div class="header">
       <div class="header-content">
-        <div class="profile-image" :style="profileImage"></div>
+        <div class="profile-image"
+             :style="`background-image:url('${profileData.data.imageUrl}')`"></div>
         <div class="info">
           <span style="color:#ffffff">{{ profileData.data.name }}</span>
           <span class="small-text" style="margin-left:20px;">
@@ -41,59 +42,29 @@ export default {
       type: Object,
       required: true,
     },
-    isOwnProfile: {
-      type: Boolean,
-      required: true,
-    },
   },
   data() {
     return {
-      image: '',
+
     };
   },
   computed: {
-    profileImage() {
-      if (!this.profileData.id) {
-        return '';
-      }
-      const src = `http://localhost:3000/images/profiles/${this.profileData.id}.jpg`;
-      /*
-      this.imageExists(src, function(imageExists) {
-        if(imageExists === true) {
-          return `background-image:url('${src}')`;
-        } else {
-          return 'background-image:url("./placeholders/profile.jpg")';
-        }
-      }); */
-      const img = new Image();
-      img.src = src;
-      if (img.width === 0) {
-        return 'background-image:url("./placeholders/profile.jpg")';
-      }
-      return `background-image:url('${src}')`;
-    },
     followed() {
-      return this.profileData.followers.filter(id => this.authId === id).length !== 0;
+      return this.profileData.followers.filter(id => this.auth.id === id).length !== 0;
     },
-    authId() {
-      return this.$store.state.people.personalData.id;
+    auth() {
+      return this.$store.state.people.personalData;
+    },
+    isOwnProfile() {
+      if (this.$store.state.people.personalData.token) {
+        return this.$route.params.username === this.auth.data.username;
+      }
+      return false;
     },
   },
   methods: {
-    imageExists(imageUrl, callBack) {
-      const imageData = new Image();
-      imageData.onload = function () {
-        this.image = callBack(true);
-        console.log(this.image);
-      };
-      imageData.onerror = function () {
-        this.image = callBack(false);
-        console.log(this.image);
-      };
-      imageData.src = imageUrl;
-    },
     follow() {
-      if (!this.authId) {
+      if (!this.auth.id) {
         console.log('First sign in.'); // Error handling
         return;
       }
@@ -118,15 +89,10 @@ export default {
 
 .header {
   background: $primary;
-  grid-column-start: 1;
-  grid-column-end: 3;
-  display: grid;
-  grid-template-columns: auto 600px auto;
+  grid-column: 2;
 }
 .header-content {
   padding: 20px;
-  grid-column-start: 2;
-  grid-column-end: 3;
 }
 .profile-image {
   box-shadow: 0px 0px 10px white;

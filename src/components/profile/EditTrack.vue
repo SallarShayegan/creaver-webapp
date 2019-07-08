@@ -31,10 +31,17 @@ export default {
   },
   methods: {
     editTrack() {
+      console.log(this.editedData);
       this.$store.dispatch('tracks/editTrack', {
         id: this.id,
-        newData: this.editedData,
+        newData: this.editedData.trackData,
       })
+        .then(() => {
+          if (this.editedData.image) this.$store.dispatch('tracks/changeTrackImage', {
+            id: this.id,
+            image: this.editedData.image,
+          });
+        })
         .then(() => this.$emit('close'));
     },
     deleteTrack() {

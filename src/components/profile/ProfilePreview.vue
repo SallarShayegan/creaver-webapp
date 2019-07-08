@@ -1,6 +1,7 @@
 <template>
   <div class="profile-preview" @click="emitClick">
-    <div class="profile-image" :style="profileImage"></div>
+    <div class="profile-image"
+         :style="`background-image:url('${personsData.data.imageUrl}')`"></div>
     {{ personsData.data.name }}
     <div class="abo" v-if="authId !== personsData.id">
       <button @click="follow" @blur="followClicked = false">
@@ -52,30 +53,12 @@ export default {
       return this.$store.getters['people/getPersonalDataById'](this.id) || { data: {} };
     },
     followed() {
-      return this.personsData.followers.filter(id => this.authId === id).length !== 0;
+      if (this.personsData.followers)
+        return this.personsData.followers.includes(this.authId);
+      return false;
     },
     authId() {
       return this.$store.state.people.personalData.id;
-    },
-    profileImage() {
-      if (!this.id) {
-        return '';
-      }
-      const src = `http://localhost:3000/images/profiles/${this.id}.jpg`;
-      /*
-      this.imageExists(src, function(imageExists) {
-        if(imageExists === true) {
-          return `background-image:url('${src}')`;
-        } else {
-          return 'background-image:url("./placeholders/profile.jpg")';
-        }
-      }); */
-      const img = new Image();
-      img.src = src;
-      if (img.width === 0) {
-        return 'background-image:url("./placeholders/profile.jpg")';
-      }
-      return `background-image:url('${src}')`;
     },
   },
 };

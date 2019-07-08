@@ -19,15 +19,21 @@
     <div v-if="!editingTrack">
       Select track: <input type="file" @change="addTrack($event)"/>
     </div>
-    Select image: <input type="file" @change="addImage($event)"/>
-    <div v-if="editingTrack">
+    Select image:<br>
+    <image-input @imageAdded="addImage($event)"/>
+    <div v-if="editingTrack" style="margin-top:10px;">
       <button @click="deleteTrack" class="background-red">Remove track</button>
     </div>
   </div>
 </template>
 
 <script>
+import ImageInput from '@/components/base/ImageInput.vue';
+
 export default {
+  components: {
+    ImageInput,
+  },
   props: {
     editingTrack: {
       default: '',
@@ -41,8 +47,9 @@ export default {
         discription: '',
         place: '',
         genre: '',
+        hasImage: false,
       },
-      image: {},
+      image: null,
       trackFile: {},
     };
   },
@@ -55,30 +62,28 @@ export default {
           this.trackData.discription = trackData.discription;
           this.trackData.genre = trackData.genre;
           this.trackData.place = trackData.place;
+          this.trackData.hasImage = trackData.hasImage;
         });
     }
   },
   methods: {
     sendData() {
       // [Validation]
-      if (this.editingTrack) {
-        this.$emit('input', this.trackData);
-      } else {
-        this.$emit('input', {
-          trackData: { data: this.trackData },
-          trackFile: this.trackFile,
-          image: this.image,
-        });
-      }
+      const result = {
+        trackData: this.trackData,
+        image: this.image,
+      };
+      if (!this.editingTrack) result.trackFile = this.trackFile;
+      this.$emit('input', result);
     },
     addTrack(event) {
       // eslint-disable-next-line
       this.trackFile = event.target.files[0];
       this.sendData();
     },
-    addImage(event) {
-      // eslint-disable-next-line
-      this.image = event.target.files[0];
+    addImage(image) {
+      this.image = image;
+      this.trackData.hasImage = true;
       this.sendData();
     },
     deleteTrack() {

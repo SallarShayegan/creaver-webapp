@@ -1,6 +1,7 @@
 <template>
   <div class="track-preview" @click="play">
-    <div class="thumbnail" :style="thumbnail"></div>
+    <div class="thumbnail"
+         :style="`background-image:url('${trackData.data.imageUrl}')`"></div>
     {{ trackData.data.name }}
     <span v-if="editable"
           class="edit-button"
@@ -45,18 +46,6 @@ export default {
   computed: {
     trackData() {
       return this.$store.getters['tracks/getTrackById'](this.id) || { data: {} };
-    },
-    thumbnail() {
-      const thumbnail = new Image();
-      thumbnail.src = `http://localhost:3000/images/tracks/${this.id}.jpg`;
-      if (thumbnail.width === 0) {
-        return 'background-image:url("./placeholders/track.jpg")';
-      }
-      return `background-image:url('${thumbnail.src}')`;
-      /*
-      return 'background-image: url("http://localhost:3000/images/tracks/nopic.jpg"),'
-           + `url('http://localhost:3000/images/tracks/${this.id}.jpg')`;
-      */
     },
   },
 };

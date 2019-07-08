@@ -12,7 +12,10 @@ export default {
   },
   mutations: {
     ADD_TRACK(state, payload) {
-      if (!state.tracks.includes(payload)) {
+      if (state.tracks.filter(track => payload.id === track.id).length === 0) {
+        const imageUrl = `http://localhost:3000/images/tracks/${payload.id}.jpg`;
+        const placeholder = './placeholders/track.jpg';
+        payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
         // eslint-disable-next-line
         state.tracks.push(payload);
       }
@@ -33,9 +36,11 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
         .then((result) => {
-          axios.put(`/tracks/${result.data.id}/track-image`, data.image, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          });
+          if (data.image) {
+            axios.put(`/tracks/${result.data.id}/change-image`, data.image, {
+              headers: { 'Content-Type': 'multipart/form-data' },
+            });
+          }
         });
     },
 
@@ -53,6 +58,13 @@ export default {
     getTrackById({ commit }, id) {
       axios.get(`tracks/${id}`)
         .then(result => commit('ADD_TRACK', result.data));
+    },
+
+    // eslint-disable-next-line
+    changeTrackImage({ }, data) {
+      axios.put(`tracks/${data.id}/change-image`, data.image, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
     },
 
   },

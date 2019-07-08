@@ -57,6 +57,7 @@ export default {
   },
   methods: {
     saveChanges() {
+      if (this.profileImage) this.editingData.data.hasImage = true;
       this.$store.dispatch('people/changePersonalData', this.editingData);
       if (this.profileImage) {
         this.$store.dispatch('people/changeProfileImage', {
