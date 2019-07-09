@@ -7,8 +7,9 @@
               style="margin-right: 10px;">Close</button>
     </div>
     <div style="clear:both"></div>
+    <span v-if="list.length < 1">{{ profileData.data.name }} hasn't got any {{ type }} yet.</span>
     <div v-for="person in list" :key="person">
-      <profile-preview :id="person" @click="showProfile($event)"/>
+      <profile-preview :id="person" @click="$emit('close');"/>
     </div>
   </div>
 </template>
@@ -29,13 +30,6 @@ export default {
       if (this.type === 'followers') return this.profileData.followers;
       if (this.type === 'following') return this.profileData.following;
       return [];
-    },
-  },
-  methods: {
-    showProfile(username) {
-      this.$emit('close');
-      this.$store.dispatch('people/loadProfileData', username)
-        .then(() => this.$router.push(`/${username}`));
     },
   },
 };

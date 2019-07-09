@@ -64,18 +64,14 @@ export default {
   },
   methods: {
     follow() {
-      if (!this.auth.id) {
-        console.log('First sign in.'); // Error handling
-        return;
-      }
       if (this.followed) {
         this.$store.dispatch('people/unfollow', {
-          follower_id: this.authId,
+          follower_id: this.auth.id,
           following_id: this.profileData.id,
         });
       } else {
         this.$store.dispatch('people/follow', {
-          follower_id: this.authId,
+          follower_id: this.auth.id,
           following_id: this.profileData.id,
         });
       }

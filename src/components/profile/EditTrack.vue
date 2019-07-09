@@ -37,10 +37,12 @@ export default {
         newData: this.editedData.trackData,
       })
         .then(() => {
-          if (this.editedData.image) this.$store.dispatch('tracks/changeTrackImage', {
-            id: this.id,
-            image: this.editedData.image,
-          });
+          if (this.editedData.image) {
+            this.$store.dispatch('tracks/changeTrackImage', {
+              id: this.id,
+              image: this.editedData.image,
+            });
+          }
         })
         .then(() => this.$emit('close'));
     },

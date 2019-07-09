@@ -2,23 +2,23 @@
   <div class="container">
     <div class="before-header"></div>
     <profile-header :profileData="profileData"
-                    @editClicked="editProfile"
-                    @showFollowing="followView = true; followType = 'following'"
-                    @showFollowers="followView = true; followType = 'followers'"/>
+                    @editClicked="viewPort = 'editProfile';"
+                    @showFollowing="viewPort = 'connection'; followType = 'following'"
+                    @showFollowers="viewPort = 'connection'; followType = 'followers'"/>
     <div class="after-header"></div>
     <div class="before-body"></div>
     <div class="profile-body">
       <div class="mainbar">
-        <div class="tracks" v-if="tracksView">
+        <div class="tracks" v-if="viewPort === 'tracks'">
           <h3 class="float-left">Resent tracks</h3>
           <div class="float-right" style="margin-top:20px" v-if="isOwnProfile">
-            <button @click="uploadView = true">+ Add track</button>
+            <button @click="viewPort = 'upload'">+ Add track</button>
           </div>
           <div style="clear:both"></div>
           <div>
             <div v-for="track in profileData.tracks" :key="track">
               <track-preview :id="track"
-                            @editClicked="editingTrack = track"
+                            @editClicked="viewPort = 'editTrack'; editingTrack = track"
                             :editable="isOwnProfile"/>
             </div>
             <div v-if="!profileData.tracks || profileData.tracks.length < 1">
@@ -26,17 +26,17 @@
             </div>
           </div>
         </div>
-        <upload-track v-if="uploadView"
+        <upload-track v-if="viewPort === 'upload'"
                       :artistId="profileData.id"
-                      @close="uploadView = false"/>
-        <edit-track v-if="editingTrack"
+                      @close="viewPort = 'tracks'"/>
+        <edit-track v-if="viewPort === 'editTrack'"
                     :id="editingTrack"
-                    @close="editingTrack = ''"/>
-        <edit-profile v-if="editProfileView" @close="editProfileView = false"/>
-        <people v-if="followView"
-                :type="followType"
-                :profileData="profileData"
-                @close="followView = false"/>
+                    @close="viewPort = 'tracks'"/>
+        <edit-profile v-if="viewPort === 'editProfile'" @close="viewPort = 'tracks'"/>
+        <profile-connection v-if="viewPort === 'connection'"
+                            :type="followType"
+                            :profileData="profileData"
+                            @close="viewPort = 'tracks'"/>
       </div>
       <div class="sidebar">
         0 monthly listeners
@@ -53,7 +53,7 @@ import UploadTrack from '@/components/profile/UploadTrack.vue';
 import EditTrack from '@/components/profile/EditTrack.vue';
 import ProfileHeader from '@/components/profile/ProfileHeader.vue';
 import EditProfile from '@/components/profile/EditProfile.vue';
-import People from '@/components/profile/People.vue';
+import ProfileConnection from '@/components/profile/ProfileConnection.vue';
 
 export default {
   components: {
@@ -62,14 +62,12 @@ export default {
     EditTrack,
     ProfileHeader,
     EditProfile,
-    People,
+    ProfileConnection,
   },
   data() {
     return {
-      uploadView: false,
+      viewPort: 'tracks',
       editingTrack: '',
-      editProfileView: false,
-      followView: false,
       followType: '',
     };
   },
@@ -88,21 +86,11 @@ export default {
       return false;
     },
     authUsername() {
-      return this.$store.state.people.personalData.data.userName;
-    },
-    tracksView() {
-      return !this.uploadView
-             && !this.editingTrack
-             && !this.editProfileView
-             && !this.followView;
+      return this.$store.state.people.personalData.data.username;
     },
   },
   methods: {
-    editProfile() {
-      this.editProfileView = true;
-      this.uploadView = false;
-      this.editingTrack = '';
-    },
+
   },
 };
 </script>

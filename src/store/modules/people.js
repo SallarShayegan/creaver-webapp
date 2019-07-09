@@ -34,7 +34,8 @@ export default {
   },
   mutations: {
     SET_ALL_PERSONAL_DATA(state, payload) {
-      payload.forEach(person => {
+      payload.forEach((person) => {
+        // eslint-disable-next-line
         person.data.imageUrl = (person.data.hasImage) ? imageUrl(person.id) : placeholder;
       });
       // eslint-disable-next-line
@@ -42,6 +43,7 @@ export default {
     },
     ADD_PERSONS_DATA(state, payload) {
       if (state.people.filter(person => payload.id === person.id).length === 0) {
+        // eslint-disable-next-line
         payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
         state.people.push(payload);
       }
@@ -58,7 +60,8 @@ export default {
       state.profileData = payload;
     },
     RESET_PROFILE_DATA(state) {
-      state.profileData =  {
+      // eslint-disable-next-line
+      state.profileData = {
         data: { imageUrl: placeholder },
         id: '',
         tracks: [],
@@ -127,19 +130,20 @@ export default {
         .catch(err => console.log(err));
     },
 
-    // eslint-disable-next-line
-    follow({ }, data) {
-      axios.put(`people/${data.following_id}/add-follower`, { follower_id: data.follower_id })
-        .then(() => {
-          axios.put(`people/${data.follower_id}/add-following`, { following_id: data.following_id })
-            .catch(err => console.log(err));
-        })
-        .catch(err => console.log(err));
+    follow({ state }, data) {
+      if (data.following_id === data.follower_id) console.log('Cannot follow self.');
+      else {
+        axios.put(`people/${data.following_id}/add-follower`, { follower_id: data.follower_id, token: state.personalData.token })
+          .then(() => {
+            axios.put(`people/${data.follower_id}/add-following`, { following_id: data.following_id })
+              .catch(err => console.log(err));
+          })
+          .catch(err => console.log(err));
+      }
     },
 
-    // eslint-disable-next-line
-    unfollow({ }, data) {
-      axios.put(`people/${data.following_id}/remove-follower`, { follower_id: data.follower_id })
+    unfollow({ state }, data) {
+      axios.put(`people/${data.following_id}/remove-follower`, { follower_id: data.follower_id, token: state.personalData.token })
         .then(() => {
           axios.put(`people/${data.follower_id}/remove-following`, { following_id: data.following_id })
             .catch(err => console.log(err));

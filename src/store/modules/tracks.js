@@ -15,6 +15,7 @@ export default {
       if (state.tracks.filter(track => payload.id === track.id).length === 0) {
         const imageUrl = `http://localhost:3000/images/tracks/${payload.id}.jpg`;
         const placeholder = './placeholders/track.jpg';
+        // eslint-disable-next-line
         payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
         // eslint-disable-next-line
         state.tracks.push(payload);

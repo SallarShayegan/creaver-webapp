@@ -4,16 +4,19 @@
       <h1>Home</h1>
       <h2>People</h2>
       <div v-for="person in people" :key="person.id">
-        <router-link :to="`/${person.data.username}`">
-          {{ person.data.name }}
-        </router-link>
+        <profile-preview :profile="person"/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import ProfilePreview from '@/components/profile/ProfilePreview.vue';
+
 export default {
+  components: {
+    ProfilePreview,
+  },
   created() {
     this.$store.dispatch('people/getAllPersonalData');
   },
