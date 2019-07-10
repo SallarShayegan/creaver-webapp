@@ -1,4 +1,5 @@
 import Axios from 'axios';
+import store from '../index';
 
 const axios = Axios.create({
   baseURL: 'http://localhost:3000/api/',
@@ -42,17 +43,28 @@ export default {
               headers: { 'Content-Type': 'multipart/form-data' },
             });
           }
-        });
+        })
+        .then(() => {
+          store.dispatch('sendNote', { type: 'info', message: 'Track been uploaded successfully.' });
+        })
+        .catch(err => console.log(err));
     },
 
     // eslint-disable-next-line
     editTrack({ }, data) {
-      axios.put(`tracks/${data.id}`, data.newData);
+      axios.put(`tracks/${data.id}`, data.newData)
+        .then(() => {
+          store.dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' });
+        })
+        .catch(err => console.log(err));
     },
 
-    deleteTrack({ dispatch, state }, data) {
+    // eslint-disable-next-line
+    deleteTrack({ }, data) {
       axios.delete(`tracks/${data.id}`)
-        .then(() => { dispatch('loadPersonsTracks', state.profileData.id); });
+        .then(() => {
+          store.dispatch('sendNote', { type: 'info', message: 'Deleted track successfully.' });
+        });
     },
 
     // eslint-disable-next-line

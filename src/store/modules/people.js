@@ -1,4 +1,6 @@
 import Axios from 'axios';
+import store from '../index';
+import router from '../../router/index';
 
 const axios = Axios.create({
   baseURL: 'http://localhost:3000/api/',
@@ -24,11 +26,6 @@ export default {
       following: [],
       followers: [],
       hasProfilePic: false,
-    },
-    errors: {
-      signUp: [],
-      login: [],
-      settings: [],
     },
     people: [],
   },
@@ -89,30 +86,41 @@ export default {
     getAllPersonalData({ commit }) {
       axios.get('people')
         .then(result => commit('SET_ALL_PERSONAL_DATA', result.data))
-        .catch(err => console.log(err));
+        .catch(() => store.dispatch('sendNote'));
     },
 
     getPersonalDataById({ commit }, id) {
       axios.get(`people/${id}`)
         .then(result => commit('ADD_PERSONS_DATA', result.data))
-        .catch(err => console.log(err));
+        .catch(() => store.dispatch('sendNote', { message: 'Person not found.' }));
     },
 
-    addNewPerson({ state }, data) {
+    // eslint-disable-next-line
+    addNewPerson({ }, data) {
       axios.post('people', data)
-        .catch(err => state.errors.signUp.push(err));
+        .then(() => {
+          store.dispatch('sendNote', { type: 'info', message: 'Welcome to the community!' });
+          router.push('./login');
+        })
+        .catch(() => store.dispatch('sendNote', { message: 'Please fill form correctly.' }));
     },
 
-    logPersonIn({ state, commit }, data) {
+    logPersonIn({ commit }, data) {
       axios.post('people/login', data)
-        .then(result => commit('SET_PERSONAL_DATA', result.data))
-        .catch(err => state.errors.login.push(err));
+        .then((result) => {
+          commit('SET_PERSONAL_DATA', result.data);
+          router.push(`/${result.data.data.username}`);
+        })
+        .catch(() => store.dispatch('sendNote', { message: 'Ups... Wrong login data!' }));
     },
 
-    changePersonalData({ state, commit }, data) {
+    changePersonalData({ commit }, data) {
       axios.put(`people/${data.id}`, data.data)
-        .then(() => commit('SET_PERSONAL_DATA', data))
-        .catch(err => state.errors.settings.push(err));
+        .then(() => {
+          commit('SET_PERSONAL_DATA', data);
+          store.dispatch('sendNote', { type: 'info', message: 'Edited successfully.' });
+        })
+        .catch(() => store.dispatch('sendNote'));
     },
 
     loadProfileData({ commit }, username) {
@@ -131,7 +139,8 @@ export default {
     },
 
     follow({ state }, data) {
-      if (data.following_id === data.follower_id) console.log('Cannot follow self.');
+      if (!state.personalData.token) store.dispatch('sendNote', { type: 'error', message: 'First sign in.' });
+      else if (data.following_id === data.follower_id) store.dispatch('sendNote', { type: 'error', message: "Can't follow yourself!" });
       else {
         axios.put(`people/${data.following_id}/add-follower`, { follower_id: data.follower_id, token: state.personalData.token })
           .then(() => {

@@ -3,10 +3,6 @@
     <div>
       <h1>Sign up</h1>
       <div class="signup-container">
-        <div class="column-100">
-          <!-- stays invisible removed after closing //-->
-          <alert v-for="error in errors" :key="error.index" :message="error.message"/>
-        </div>
         <input class="column-100" type="text" v-model="name" placeholder="Name"/>
         <input class="column-100"
               type="text"
@@ -35,12 +31,8 @@
 </template>
 
 <script>
-import Alert from '@/components/base/Alert.vue';
 
 export default {
-  components: {
-    Alert,
-  },
   data() {
     return {
       name: '',
@@ -66,7 +58,6 @@ export default {
           password: this.password,
         };
         this.$store.dispatch('people/addNewPerson', data)
-          .then(() => {})
           .catch(err => this.errors.push({ message: err }));
       }
     },

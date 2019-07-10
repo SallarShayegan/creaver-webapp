@@ -40,10 +40,8 @@ export default {
         artist_id: this.artistId,
         data: this.newTrack.trackData,
       };
-      console.log(this.newTrack.trackData);
       data.append('trackData', JSON.stringify(this.newTrack.trackData));
       const image = new FormData();
-      // image.append('image', this.newTrack.image);
       this.$store.dispatch('tracks/uploadTrack', { data, image })
         .then(() => this.$emit('close'));
     },

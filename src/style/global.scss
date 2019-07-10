@@ -46,6 +46,14 @@ button:hover {
   background: $red_dark;
 }
 
+.background-green {
+  background: $green;
+}
+
+.background-green:hover {
+  background: $green_dark;
+}
+
 a {
   color: $primary_dark;
   text-decoration: none;

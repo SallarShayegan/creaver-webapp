@@ -29,10 +29,6 @@ export default {
   methods: {
     follow() {
       this.followClicked = true;
-      if (!this.authId) {
-        console.log('First sign in.'); // Error handling
-        return;
-      }
       if (this.followed) {
         this.$store.dispatch('people/unfollow', {
           follower_id: this.authId,

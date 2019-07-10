@@ -1,7 +1,9 @@
 <template>
-  <div v-if="visible" class="alert">
-    <span style="float:left">{{ message }}</span>
-    <span style="float:right; cursor:pointer" @click="visible = false">x</span>
+  <div v-if="visible"
+       id="alert"
+       :class="(type === 'error') ? 'background-red' : 'background-green'">
+    <span style="float:left;margin-right:30px">{{ message }}</span>
+    <span style="float:right;cursor:pointer" @click="visible = false">x</span>
     <div style="clear:both"></div>
   </div>
 </template>
@@ -10,8 +12,14 @@
 export default {
   name: 'alert',
   props: {
-    background: String,
-    message: String,
+    type: {
+      type: String,
+      default: 'error',
+    },
+    message: {
+      type: String,
+      default: 'Something went wrong!',
+    },
   },
   data() {
     return {
@@ -22,10 +30,10 @@ export default {
 </script>
 
 <style scoped>
-.alert {
+#alert {
   padding: 10px 15px;
-  background-color: #ffaaaa;
-  color: #cc0000;
+  color: #ffffff;
   margin: 2px 0;
+  cursor: pointer;
 }
 </style>
