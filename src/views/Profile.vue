@@ -78,19 +78,17 @@ export default {
     this.$store.commit('people/RESET_PROFILE_DATA');
   },
   computed: {
-    ...mapState({ profileData: state => state.people.profileData }),
+    ...mapState({ auth: state => state.auth.auth }),
     isOwnProfile() {
-      if (this.$store.state.people.personalData.token) {
-        return this.$route.params.username === this.authUsername;
+      if (this.$store.state.auth.auth.token) {
+        return this.$route.params.username === this.auth.data.username;
       }
       return false;
     },
-    authUsername() {
-      return this.$store.state.people.personalData.data.username;
+    profileData() {
+      if (this.isOwnProfile) return this.auth;
+      else return this.$store.state.people.profileData;
     },
-  },
-  methods: {
-
   },
 };
 </script>

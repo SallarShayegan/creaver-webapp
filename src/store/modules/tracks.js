@@ -1,10 +1,5 @@
-import Axios from 'axios';
+import axios from '../axiosConfig';
 import store from '../index';
-
-const axios = Axios.create({
-  baseURL: 'http://localhost:3000/api/',
-  timeout: 1000,
-});
 
 export default {
   namespaced: true,
@@ -21,6 +16,14 @@ export default {
         // eslint-disable-next-line
         state.tracks.push(payload);
       }
+    },
+    SET_TRACK_DATA(state, payload) {
+      const imageUrl = `http://localhost:3000/images/tracks/${payload.id}.jpg`;
+      const placeholder = './placeholders/track.jpg';
+      // eslint-disable-next-line
+      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
+      const track = state.tracks.filter(track => payload.id === track.id);
+      if (track.length !== 0) track[0].data = payload.data;
     },
   },
   getters: {
@@ -45,15 +48,16 @@ export default {
           }
         })
         .then(() => {
+          store.dispatch('refreshAuthData');
           store.dispatch('sendNote', { type: 'info', message: 'Track been uploaded successfully.' });
         })
         .catch(err => console.log(err));
     },
 
-    // eslint-disable-next-line
-    editTrack({ }, data) {
+    editTrack({ commit }, data) {
       axios.put(`tracks/${data.id}`, data.newData)
         .then(() => {
+          commit('SET_TRACK_DATA', { id: data.id, data: data.newData });
           store.dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' });
         })
         .catch(err => console.log(err));
@@ -63,6 +67,7 @@ export default {
     deleteTrack({ }, data) {
       axios.delete(`tracks/${data.id}`)
         .then(() => {
+          store.dispatch('refreshAuthData');
           store.dispatch('sendNote', { type: 'info', message: 'Deleted track successfully.' });
         });
     },

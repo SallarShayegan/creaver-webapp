@@ -3,7 +3,7 @@
     <div class="profile-image"
          :style="`background-image:url('${profileData.data.imageUrl}')`"></div>
     {{ profileData.data.name }}
-    <div class="abo" v-if="authId !== profileData.id">
+    <div class="abo" v-if="auth.id !== profileData.id">
       <button @click="follow" @blur="followClicked = false">
         Follow{{ (followed) ? 'ed' : '' }}
       </button>
@@ -31,12 +31,12 @@ export default {
       this.followClicked = true;
       if (this.followed) {
         this.$store.dispatch('people/unfollow', {
-          follower_id: this.authId,
+          follower_id: this.auth.id,
           following_id: this.profileData.id,
         });
       } else {
         this.$store.dispatch('people/follow', {
-          follower_id: this.authId,
+          follower_id: this.auth.id,
           following_id: this.profileData.id,
         });
       }
@@ -58,11 +58,11 @@ export default {
       return this.$store.getters['people/getPersonalDataById'](this.id) || { data: {} };
     },
     followed() {
-      if (this.profileData.followers) return this.profileData.followers.includes(this.authId);
+      if (this.auth.following) return this.auth.following.includes(this.id);
       return false;
     },
-    authId() {
-      return this.$store.state.people.personalData.id;
+    auth() {
+      return this.$store.state.auth.auth;
     },
   },
 };

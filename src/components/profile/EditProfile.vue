@@ -69,7 +69,7 @@ export default {
     },
   },
   created() {
-    this.editingData = JSON.parse(JSON.stringify(this.$store.state.people.personalData));
+    this.editingData = JSON.parse(JSON.stringify(this.$store.state.auth.auth));
   },
 };
 </script>

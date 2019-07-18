@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     auth() {
-      return this.$store.state.people.personalData;
+      return this.$store.state.auth.auth;
     },
   },
   methods: {

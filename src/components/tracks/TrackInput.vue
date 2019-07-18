@@ -63,6 +63,7 @@ export default {
           this.trackData.genre = trackData.genre;
           this.trackData.place = trackData.place;
           this.trackData.hasImage = trackData.hasImage;
+          this.trackData.imageUrl = trackData.imageUrl;
         });
     }
   },

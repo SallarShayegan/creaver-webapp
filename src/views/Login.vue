@@ -31,12 +31,12 @@ export default {
       if (this.username.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
         data.email = this.username;
       } else data.username = this.username;
-      this.$store.dispatch('people/logPersonIn', data);
+      this.$store.dispatch('login', data);
     },
   },
   computed: {
     userRoute() {
-      return this.$store.state.people.personalData.data.username;
+      return this.$store.state.auth.auth.data.username;
     },
   },
 };

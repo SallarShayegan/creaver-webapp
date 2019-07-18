@@ -53,10 +53,10 @@ export default {
       return this.profileData.followers.filter(id => this.auth.id === id).length !== 0;
     },
     auth() {
-      return this.$store.state.people.personalData;
+      return this.$store.state.auth.auth;
     },
     isOwnProfile() {
-      if (this.$store.state.people.personalData.token) {
+      if (this.auth.token) {
         return this.$route.params.username === this.auth.data.username;
       }
       return false;
