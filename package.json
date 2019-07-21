@@ -15,6 +15,7 @@
     "core-js": "^2.6.5",
     "npm-font-open-sans": "^1.1.0",
     "vue": "^2.6.10",
+    "vue-jwt-decode": "^0.1.0",
     "vue-meta": "^1.6.0",
     "vue-router": "^3.0.3",
     "vuex": "^3.0.1"

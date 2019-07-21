@@ -1,5 +1,4 @@
 import axios from '../axiosConfig';
-import store from '../index';
 import router from '../../router/index';
 
 const placeholder = './placeholders/profile.jpg';
@@ -66,58 +65,61 @@ export default {
   },
   actions: {
 
-    getAllPersonalData({ commit }) {
+    getAllPersonalData({ commit, dispatch }) {
       axios.get('people')
         .then(result => commit('SET_ALL_PERSONAL_DATA', result.data))
-        .catch(() => store.dispatch('sendNote'));
+        .catch(() => dispatch('sendNote', null, { root: true }));
     },
 
-    getPersonalDataById({ commit }, id) {
+    getPersonalDataById({ commit, dispatch }, id) {
       axios.get(`people/${id}`)
         .then(result => commit('ADD_PERSONS_DATA', result.data))
-        .catch(() => store.dispatch('sendNote', { message: 'Person not found.' }));
+        .catch(() => dispatch('sendNote', { message: 'Person not found.' }, { root: true }));
     },
 
-    // eslint-disable-next-line
-    addNewPerson({ }, data) {
+    addNewPerson({ dispatch }, data) {
       axios.post('people', data)
         .then(() => {
-          store.dispatch('sendNote', { type: 'info', message: 'Welcome to the community!' });
+          dispatch('sendNote', { type: 'info', message: 'Welcome to the community!' }, { root: true });
           router.push('./login');
         })
-        .catch(() => store.dispatch('sendNote', { message: 'Please fill form correctly.' }));
+        .catch(() => dispatch('sendNote', { message: 'Please fill form correctly.' }, { root: true }));
     },
 
-    changePersonalData({ commit }, data) {
-      axios.put(`people/${data.id}`, data.data)
+    changePersonalData({ rootState, dispatch }, data) {
+      axios.put(`people/${data.id}`, { data: data.data }, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
         .then(() => {
-          store.dispatch('refreshAuthData');
-          store.dispatch('sendNote', { type: 'info', message: 'Edited successfully.' });
+          dispatch('refreshAuthData', null, { root: true });
+          dispatch('sendNote', { type: 'info', message: 'Edited successfully.' }, { root: true });
         })
         .catch(err => console.log(err));
     },
 
     loadProfileData({ commit }, username) {
       axios.get(`people/profile/${username}`)
-        .then((result) => {
-          commit('SET_PROFILE_DATA', result.data);
-        })
+        .then(result => commit('SET_PROFILE_DATA', result.data))
         .catch(err => console.log(err));
     },
 
     follow({ rootState, dispatch }, data) {
-      if (!rootState.auth.auth.token) store.dispatch('sendNote', { type: 'error', message: 'First sign in.' });
-      else if (data.following_id === data.follower_id) store.dispatch('sendNote', { type: 'error', message: "Can't follow yourself!" });
+      if (!rootState.auth.auth.token) dispatch('sendNote', { type: 'error', message: 'First sign in.' }, { root: true });
+      else if (data.following_id === data.follower_id) dispatch('sendNote', { type: 'error', message: "Can't follow yourself!" }, { root: true });
       else {
-        axios.put(`people/${data.follower_id}/follow/${data.following_id}`, { token: rootState.auth.auth.token })
-          .then(() => store.dispatch('refreshAuthData'))
+        axios.put(`people/${data.follower_id}/follow/${data.following_id}`, null, {
+          headers: { Authorization: rootState.auth.auth.token },
+        })
+          .then(() => dispatch('refreshAuthData', null, { root: true }))
           .catch(err => console.log(err));
       }
     },
 
     unfollow({ rootState, dispatch }, data) {
-      axios.put(`people/${data.follower_id}/unfollow/${data.following_id}`, { token: rootState.auth.auth.token })
-        .then(() => store.dispatch('refreshAuthData'))
+      axios.put(`people/${data.follower_id}/unfollow/${data.following_id}`, null, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
+        .then(() => dispatch('refreshAuthData', null, { root: true }))
         .catch(err => console.log(err));
     },
 

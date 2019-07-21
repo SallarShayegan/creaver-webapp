@@ -1,5 +1,4 @@
 import axios from '../axiosConfig';
-import store from '../index';
 
 export default {
   namespaced: true,
@@ -22,8 +21,8 @@ export default {
       const placeholder = './placeholders/track.jpg';
       // eslint-disable-next-line
       payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
-      const track = state.tracks.filter(track => payload.id === track.id);
-      if (track.length !== 0) track[0].data = payload.data;
+      const tracks = state.tracks.filter(track => payload.id === track.id);
+      if (tracks.length !== 0) tracks[0].data = payload.data;
     },
   },
   getters: {
@@ -35,40 +34,41 @@ export default {
   },
   actions: {
 
-    // eslint-disable-next-line
-    uploadTrack({ }, data) {
+    uploadTrack({ rootState, dispatch }, data) {
       axios.post('tracks', data.data, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Authorization: rootState.auth.auth.token,
+        },
       })
         .then((result) => {
-          if (data.image) {
-            axios.put(`/tracks/${result.data.id}/change-image`, data.image, {
-              headers: { 'Content-Type': 'multipart/form-data' },
-            });
-          }
+          if (data.image) dispatch('changeTrackImage', { id: result.data.id, image: data.image });
         })
+        .then(() => dispatch('refreshAuthData', null, { root: true }))
         .then(() => {
-          store.dispatch('refreshAuthData');
-          store.dispatch('sendNote', { type: 'info', message: 'Track been uploaded successfully.' });
+          dispatch('sendNote', { type: 'info', message: 'Track been uploaded successfully.' }, { root: true });
         })
         .catch(err => console.log(err));
     },
 
-    editTrack({ commit }, data) {
-      axios.put(`tracks/${data.id}`, data.newData)
+    editTrack({ rootState, commit, dispatch }, data) {
+      axios.put(`tracks/${data.id}`, { data: data.newData }, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
         .then(() => {
           commit('SET_TRACK_DATA', { id: data.id, data: data.newData });
-          store.dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' });
+          dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' }, { root: true });
         })
         .catch(err => console.log(err));
     },
 
-    // eslint-disable-next-line
-    deleteTrack({ }, data) {
-      axios.delete(`tracks/${data.id}`)
+    deleteTrack({ rootState, dispatch }, data) {
+      axios.delete(`tracks/${data.id}`, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
         .then(() => {
-          store.dispatch('refreshAuthData');
-          store.dispatch('sendNote', { type: 'info', message: 'Deleted track successfully.' });
+          dispatch('refreshAuthData', null, { root: true });
+          dispatch('sendNote', { type: 'info', message: 'Deleted track successfully.' }, { root: true });
         });
     },
 

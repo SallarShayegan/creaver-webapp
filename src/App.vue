@@ -19,6 +19,9 @@ export default {
   components: {
     DefaultLayout,
   },
+  created() {
+    this.$store.dispatch('fetchAccessToken');
+  },
 };
 </script>
 

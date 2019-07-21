@@ -19,7 +19,7 @@
             v-model="editingData.data.phone"
             placeholder="Phone number"/>
       <input
-            type="text"
+            type="date"
             v-model="editingData.data.birth_date"
             placeholder="Date of birth"/>
       <input

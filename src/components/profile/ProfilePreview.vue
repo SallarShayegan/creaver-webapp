@@ -58,7 +58,7 @@ export default {
       return this.$store.getters['people/getPersonalDataById'](this.id) || { data: {} };
     },
     followed() {
-      if (this.auth.following) return this.auth.following.includes(this.id);
+      if (this.auth.following) return this.auth.following.includes(this.profileData.id);
       return false;
     },
     auth() {

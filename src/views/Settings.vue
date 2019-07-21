@@ -26,7 +26,7 @@ export default {
   },
   computed: {
     signedIn() {
-      if (this.$store.state.people.personalData.token != null) {
+      if (this.$store.state.auth.auth.token != null) {
         return true;
       }
       return false;

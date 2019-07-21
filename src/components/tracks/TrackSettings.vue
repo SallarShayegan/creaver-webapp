@@ -31,7 +31,6 @@ export default {
   },
   methods: {
     editTrack() {
-      console.log(this.editedData);
       this.$store.dispatch('tracks/editTrack', {
         id: this.id,
         newData: this.editedData.trackData,

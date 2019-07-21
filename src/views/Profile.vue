@@ -26,13 +26,12 @@
             </div>
           </div>
         </div>
-        <upload-track v-if="viewPort === 'upload'"
-                      :artistId="profileData.id"
+        <track-upload v-if="viewPort === 'upload'"
                       @close="viewPort = 'tracks'"/>
-        <edit-track v-if="viewPort === 'editTrack'"
+        <track-settings v-if="viewPort === 'editTrack'"
                     :id="editingTrack"
                     @close="viewPort = 'tracks'"/>
-        <edit-profile v-if="viewPort === 'editProfile'" @close="viewPort = 'tracks'"/>
+        <profile-edit v-if="viewPort === 'editProfile'" @close="viewPort = 'tracks'"/>
         <profile-connection v-if="viewPort === 'connection'"
                             :type="followType"
                             :profileData="profileData"
@@ -49,19 +48,19 @@
 <script>
 import { mapState } from 'vuex';
 import TrackPreview from '@/components/tracks/TrackPreview.vue';
-import UploadTrack from '@/components/profile/UploadTrack.vue';
-import EditTrack from '@/components/profile/EditTrack.vue';
+import TrackUpload from '@/components/tracks/TrackUpload.vue';
+import TrackSettings from '@/components/tracks/TrackSettings.vue';
 import ProfileHeader from '@/components/profile/ProfileHeader.vue';
-import EditProfile from '@/components/profile/EditProfile.vue';
+import ProfileEdit from '@/components/profile/ProfileEdit.vue';
 import ProfileConnection from '@/components/profile/ProfileConnection.vue';
 
 export default {
   components: {
     TrackPreview,
-    UploadTrack,
-    EditTrack,
+    TrackUpload,
+    TrackSettings,
     ProfileHeader,
-    EditProfile,
+    ProfileEdit,
     ProfileConnection,
   },
   data() {
@@ -80,14 +79,14 @@ export default {
   computed: {
     ...mapState({ auth: state => state.auth.auth }),
     isOwnProfile() {
-      if (this.$store.state.auth.auth.token) {
-        return this.$route.params.username === this.auth.data.username;
+      if (this.auth.token) {
+        return this.$store.state.people.profileData.id === this.auth.id;
       }
       return false;
     },
     profileData() {
       if (this.isOwnProfile) return this.auth;
-      else return this.$store.state.people.profileData;
+      return this.$store.state.people.profileData;
     },
   },
 };

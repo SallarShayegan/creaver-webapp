@@ -43,11 +43,6 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-
-    };
-  },
   computed: {
     followed() {
       return this.profileData.followers.filter(id => this.auth.id === id).length !== 0;
@@ -57,7 +52,7 @@ export default {
     },
     isOwnProfile() {
       if (this.auth.token) {
-        return this.$route.params.username === this.auth.data.username;
+        return this.$store.state.people.profileData.id === this.auth.id;
       }
       return false;
     },
@@ -75,6 +70,7 @@ export default {
           following_id: this.profileData.id,
         });
       }
+      this.$store.dispatch('people/loadProfileData', this.profileData.data.username);
     },
   },
 };

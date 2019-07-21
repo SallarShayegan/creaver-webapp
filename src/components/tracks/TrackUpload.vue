@@ -19,16 +19,10 @@ export default {
   components: {
     TrackInput,
   },
-  props: {
-    artistId: String,
-  },
   data() {
     return {
       newTrack: {
-        trackData: {
-          artist_id: '',
-          data: {},
-        },
+        trackData: {},
       },
     };
   },
@@ -36,13 +30,9 @@ export default {
     upload() {
       const data = new FormData();
       data.append('track', this.newTrack.trackFile);
-      this.newTrack.trackData = {
-        artist_id: this.artistId,
-        data: this.newTrack.trackData,
-      };
       data.append('trackData', JSON.stringify(this.newTrack.trackData));
-      const image = new FormData();
-      this.$store.dispatch('tracks/uploadTrack', { data, image })
+
+      this.$store.dispatch('tracks/uploadTrack', { data, image: this.newTrack.image })
         .then(() => this.$emit('close'));
     },
   },

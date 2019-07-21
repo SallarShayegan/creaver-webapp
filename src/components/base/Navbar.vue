@@ -14,6 +14,9 @@
         <router-link :to="`/${auth.data.username}`">
           <div @click="loadPersonalData">Profile</div>
         </router-link>
+        <router-link to="/login">
+          <div @click="logout">Logout</div>
+        </router-link>
       </dropdown>
       <div v-else class="float-right">
         <router-link to="/sign-up">Sign up</router-link>
@@ -39,6 +42,9 @@ export default {
   methods: {
     loadPersonalData() {
       this.$store.dispatch('people/loadProfileData', this.auth.data.username);
+    },
+    logout() {
+      this.$store.dispatch('logout');
     },
   },
 };

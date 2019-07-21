@@ -1,6 +1,6 @@
+import VueJwtDecode from 'vue-jwt-decode';
 import axios from '../axiosConfig';
 import router from '../../router/index';
-import store from '../index';
 
 const placeholder = './placeholders/profile.jpg';
 function imageUrl(id) {
@@ -30,21 +30,46 @@ export default {
       // eslint-disable-next-line
       state.auth.token = payload.token;
     },
+    UPDATE_ACCESS_TOKEN(state, token) {
+      // eslint-disable-next-line
+      state.auth.token = token;
+    },
   },
 
   actions: {
-    login({ commit }, data) {
+    login({ commit, dispatch }, data) {
       axios.post('auth/login', data)
         .then((result) => {
           commit('SET_AUTH_DATA', result.data);
+          localStorage.setItem('accessToken', result.data.token);
           router.push(`/${result.data.data.username}`);
         })
-        .catch(() => store.dispatch('sendNote', { message: 'Ups... Wrong login data!' }));
+        .catch(() => dispatch('sendNote', { message: 'Ups... Wrong login data!' }, { root: true }));
     },
 
-    refreshAuthData({ state, commit }) {
-      axios.get(`auth/${state.auth.id}`)
-        .then(result => commit('REFRESH_AUTH_DATA', { data: result.data, token: state.auth.token }))
+    // Logs person out
+    logout({ commit }) {
+      localStorage.setItem('accessToken', null);
+      commit('SET_AUTH_DATA', { data: {}, id: '' });
+    },
+
+    // Fetches localStorage to get token
+    fetchAccessToken({ dispatch }) {
+      const token = localStorage.getItem('accessToken');
+      if (token !== 'null' && token) {
+        const authData = VueJwtDecode.decode(token);
+        // Check for access expiration:
+        if (authData.exp < Date.now() / 1000) router.push('/login');
+        else dispatch('refreshAuthData', { id: authData.id, token });
+      }
+    },
+
+    // Gets personal data from backend and sets value to auth
+    refreshAuthData({ state, commit }, data) {
+      // eslint-disable-next-line
+      if (!data) data = { id: state.auth.id, token: state.auth.token };
+      axios.get(`auth/${data.id}`)
+        .then(result => commit('REFRESH_AUTH_DATA', { data: result.data, token: data.token }))
         .catch(err => console.log(err));
     },
   },
