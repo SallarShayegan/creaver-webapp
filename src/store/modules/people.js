@@ -15,7 +15,6 @@ export default {
       tracks: [],
       following: [],
       followers: [],
-      hasProfilePic: false,
     },
     people: [],
   },
@@ -52,6 +51,18 @@ export default {
         followers: [],
         hasProfilePic: false,
       };
+    },
+    ADD_FOLLOWER(state, payload) {
+      if (state.profileData.id === payload.following_id
+        && !state.profileData.followers.includes(payload.follower_id)) {
+        state.profileData.followers.push(payload.follower_id);
+      }
+    },
+    REMOVE_FOLLOWER(state, payload) {
+      if (state.profileData.id === payload.following_id) {
+        const index = state.profileData.followers.indexOf(payload.follower_id);
+        state.profileData.followers.splice(index, 1);
+      }
     },
   },
   getters: {
@@ -97,13 +108,20 @@ export default {
         .catch(err => console.log(err));
     },
 
+    removeImage({ rootState }, data) {
+      axios.put(`people/${data.id}/remove-image`, null, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
+        .catch(err => console.log(err));
+    },
+
     loadProfileData({ commit }, username) {
       axios.get(`people/profile/${username}`)
         .then(result => commit('SET_PROFILE_DATA', result.data))
         .catch(err => console.log(err));
     },
 
-    follow({ rootState, dispatch }, data) {
+    follow({ rootState, dispatch, commit }, data) {
       if (!rootState.auth.auth.token) dispatch('sendNote', { type: 'error', message: 'First sign in.' }, { root: true });
       else if (data.following_id === data.follower_id) dispatch('sendNote', { type: 'error', message: "Can't follow yourself!" }, { root: true });
       else {
@@ -111,15 +129,17 @@ export default {
           headers: { Authorization: rootState.auth.auth.token },
         })
           .then(() => dispatch('refreshAuthData', null, { root: true }))
+          .then(() => commit('ADD_FOLLOWER', data))
           .catch(err => console.log(err));
       }
     },
 
-    unfollow({ rootState, dispatch }, data) {
+    unfollow({ rootState, dispatch, commit }, data) {
       axios.put(`people/${data.follower_id}/unfollow/${data.following_id}`, null, {
         headers: { Authorization: rootState.auth.auth.token },
       })
         .then(() => dispatch('refreshAuthData', null, { root: true }))
+        .then(() => commit('REMOVE_FOLLOWER', data))
         .catch(err => console.log(err));
     },
 

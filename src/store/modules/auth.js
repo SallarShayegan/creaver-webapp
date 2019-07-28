@@ -12,6 +12,7 @@ export default {
     auth: {
       data: {},
       id: '',
+      following: [],
     },
   },
 

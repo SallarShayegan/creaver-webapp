@@ -1,29 +1,32 @@
 <template>
   <div class="add-track">
-    <input type="text"
-           v-model="trackData.name"
-           placeholder="Track name"
-           @change="sendData"/>
-    <input type="text"
-           v-model="trackData.discription"
-           placeholder="Discription"
-           @change="sendData"/>
-    <input type="text"
-           v-model="trackData.place"
-           placeholder="Creation place"
-           @change="sendData"/>
-    <input type="text"
-           v-model="trackData.genre"
-           placeholder="Genre"
-           @change="sendData"/>
-    <div v-if="!editingTrack">
-      Select track: <input type="file" @change="addTrack($event)"/>
+    <div style="float:left">
+      <input type="text"
+            v-model="trackData.name"
+            placeholder="Track name"
+            @change="sendData"/>
+      <input type="text"
+            v-model="trackData.discription"
+            placeholder="Discription"
+            @change="sendData"/>
+      <input type="text"
+            v-model="trackData.place"
+            placeholder="Creation place"
+            @change="sendData"/>
+      <input type="text"
+            v-model="trackData.genre"
+            placeholder="Genre"
+            @change="sendData"/>
+      <div v-if="!editingTrack">
+        Select track: <input type="file" @change="addTrack($event)"/>
+      </div>
     </div>
-    Select image:<br>
-    <image-input @imageAdded="addImage($event)"/>
-    <div v-if="editingTrack" style="margin-top:10px;">
-      <button @click="deleteTrack" class="background-red">Remove track</button>
+    <div style="float:right">
+      <image-input @imageAdded="addImage($event)"
+                   :currentImage="trackData.imageUrl"
+                   placeholder="./placeholders/track.jpg"/>
     </div>
+    <div style="clear:both"></div>
   </div>
 </template>
 
@@ -87,8 +90,8 @@ export default {
       this.trackData.hasImage = true;
       this.sendData();
     },
-    deleteTrack() {
-      this.$emit('removeClicked');
+    removeImage() {
+      this.$store.dispatch('tracks/removeTrackImage', { id: this.editingTrack });
     },
   },
 };

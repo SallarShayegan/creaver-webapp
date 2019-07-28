@@ -1,9 +1,18 @@
 <template>
   <div>
-    <div>
-      <input type="file" name="image" @change="addFile($event)"/>
+    <div style="float:left;width:40px">
+      <div class="upload-btn-wrapper">
+        <input type="file" @change="addFile($event)"/>
+        <button class="tool-button"><i class="fas fa-pen"></i></button>
+      </div>
+      <button class="tool-button" @click="removeImage">
+        <i class="fas fa-trash"></i>
+      </button>
     </div>
-    <div class="canvas-container" @mousemove="doResize" @mouseup="stopResize">
+    <div class="canvas-container"
+         @mousemove="doResize"
+         @mouseup="stopResize"
+         style="float:rigth">
       <div id="border" @mousedown.self="startDrag"
                        @mousemove="doDrag"
                        @mouseup="stopDrag"
@@ -27,11 +36,16 @@
       </div>
       <canvas id="canvas"></canvas>
     </div>
+    <div style="clear:both"></div>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    currentImage: String,
+    placeholder: String,
+  },
   data() {
     return {
       image: null,
@@ -45,6 +59,11 @@ export default {
       },
       canvas: { width: 0, height: 0, src: '' },
     };
+  },
+  watch: {
+    currentImage() {
+      this.addFile(null, this.currentImage ? this.currentImage : this.placeholder);
+    }
   },
   computed: {
     borderStyle() {
@@ -135,12 +154,12 @@ export default {
       const { width } = document.getElementById('border').style;
       return parseInt(width.substring(0, width.indexOf('px')), 10);
     },
-    addFile(event) {
+    addFile(event, current) {
       const image = new Image();
       const canvas = document.getElementById('canvas');
       const border = document.getElementById('border');
       canvas.style.display = 'block';
-      border.style.display = 'grid';
+      if (event) border.style.display = 'grid';
 
       image.onload = () => {
         canvas.height = canvas.width * (image.height / image.width);
@@ -149,11 +168,17 @@ export default {
         const canvas2 = canvas.getContext('2d');
         canvas2.drawImage(image, 0, 0, canvas.width, canvas.height);
         this.border.size = (canvas.width > canvas.height) ? canvas.height : canvas.width;
-
-        this.canvas.src = canvas.toDataURL('image/jpeg');
-        this.prepareImage();
+        if (event) {
+          this.canvas.src = canvas.toDataURL('image/jpeg');
+          this.prepareImage();
+        }
       };
-      image.src = URL.createObjectURL(event.target.files[0]);
+      if (event) image.src = URL.createObjectURL(event.target.files[0]);
+      else if (current) image.src = current;
+    },
+    removeImage() {
+      this.currentImage = this.placeholder;
+      this.$emit('imageRemoved');
     },
     prepareImage() {
       // Build cropped image:
@@ -181,17 +206,38 @@ export default {
 };
 </script>
 
-<style scoped>
-input {
-  margin-bottom: 10px;
+<style scoped lang="scss">
+@import '../../style/variables';
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.tool-button {
+  padding: 10px;
+  border-radius: 50%;
+  background: $primary;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
 }
 .canvas-container {
   position: relative;
   overflow: hidden;
-  width: 400px;
+  width: 300px;
 }
 #canvas {
-  display: none;
+  display: block;
+  background: #f0f0f0;
 }
 #border {
   position: absolute;
@@ -199,7 +245,7 @@ input {
   z-index: 1000;
   cursor: move;
   box-shadow: 0px 0px 10000px #ffffff;
-  display: grid;
+  display: none;
   grid-template-columns: 30px auto 30px;
   grid-template-rows: 30px auto 30px;
   min-height: 60px;

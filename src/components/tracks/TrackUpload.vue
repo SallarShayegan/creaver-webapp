@@ -1,14 +1,13 @@
 <template>
   <div>
-    <h3 class="float-left">Add your track</h3>
+    <h3>Add your track</h3>
+    <track-input @input="newTrack = $event"/>
     <div class="float-right" style="margin-top:20px">
       <button @click="$emit('close')"
               class="background-red"
               style="margin-right: 10px;">Cancel</button>
       <button @click="upload">Done</button>
     </div>
-    <div style="clear:both"></div>
-    <track-input @input="newTrack = $event"/>
   </div>
 </template>
 

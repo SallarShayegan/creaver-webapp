@@ -1,7 +1,7 @@
 <template>
   <div class="edit-profile">
     <h3>Edit profile</h3>
-    <div>
+    <div style="float:left">
       <input
             type="text"
             v-model="editingData.data.username"
@@ -30,15 +30,20 @@
             type="text"
             v-model="editingData.data.country"
             placeholder="Country"/>
-      <div class="margin-top">Select profile image:</div>
-      <image-input @imageAdded="profileImage = $event"/>
-      <div class="column-100">
+      <div class="column-100" style="float:right;margin-top:20px">
         <button @click="$emit('close')"
                 class="background-red"
                 style="margin-right: 10px;">Cancel</button>
         <button @click="saveChanges" class="margin-top">Save changes</button>
       </div>
+      <div style="clear:right"></div>
     </div>
+    <div style="float:right">
+      <image-input @imageAdded="profileImage = $event"
+                   :currentImage="editingData.profileImage"
+                   placeholder="./placeholders/profile.jpg"/>
+    </div>
+    <div style="clear:both"></div>
   </div>
 </template>
 
@@ -66,6 +71,9 @@ export default {
         });
       }
       this.$emit('close');
+    },
+    removeImage() {
+      this.$store.dispatch('people/removeImage', { id: this.editingData.id });
     },
   },
   created() {

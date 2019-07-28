@@ -9,7 +9,10 @@
       <i class="fas fa-pen"></i>
     </span>
     <div class="small-text" style="float:right">
-      {{ trackData.plays }} plays | {{ trackData.likes }} likes
+      {{ trackData.plays }} plays | {{ trackData.likes.length }} likes |
+      <span id="like" :class="liked ? 'liked' : 'faded'" @click="like">
+        <i class="fas fa-heart"></i>
+      </span>
     </div>
     <div class="small-text" style="margin-top:10px;">{{ trackData.data.discription }}</div>
     <div style="clear:both"></div>
@@ -17,6 +20,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { setTimeout } from 'timers';
+
 export default {
   props: {
     id: {
@@ -31,6 +37,7 @@ export default {
   data() {
     return {
       editClicked: false,
+      likeClicked: false,
     };
   },
   created() {
@@ -38,20 +45,41 @@ export default {
   },
   methods: {
     play() {
-      if (!this.editClicked) {
+      if (!this.editClicked && !this.likeClicked) {
         window.location = `http://localhost:3000/tracks/${this.id}.mp3`;
       }
+    },
+    like() {
+      this.likeClicked = true;
+      if (!this.liked) this.$store.dispatch('tracks/like', this.id);
+      else this.$store.dispatch('tracks/dislike', this.id);
+      setTimeout(() => { this.likeClicked = false; }, 10);
     },
   },
   computed: {
     trackData() {
-      return this.$store.getters['tracks/getTrackById'](this.id) || { data: {} };
+      return this.$store.getters['tracks/getTrackById'](this.id) || { data: {}, likes: [] };
     },
+    liked() {
+      return this.trackData.likes.includes(this.auth.id);
+    },
+    ...mapState({ auth: state => state.auth.auth }),
   },
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import '../../style/variables';
+
+#like {
+  cursor: pointer;
+}
+.faded {
+  color: #cccccc;
+}
+.liked {
+  color: $primary;
+}
 .track-preview {
   padding: 10px;
   border-bottom: 1px solid #f0f0f0;

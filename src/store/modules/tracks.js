@@ -24,6 +24,14 @@ export default {
       const tracks = state.tracks.filter(track => payload.id === track.id);
       if (tracks.length !== 0) tracks[0].data = payload.data;
     },
+    ADD_LIKE(state, payload) {
+      const track = state.tracks.filter(t => t.id === payload.id)[0];
+      if (track) track.likes.push(payload.auth_id);
+    },
+    REMOVE_LIKE(state, payload) {
+      const track = state.tracks.filter(t => t.id === payload.id)[0];
+      if (track) track.likes.splice(track.likes.indexOf(payload.auth_id), 1);
+    },
   },
   getters: {
     getTrackById: state => (id) => {
@@ -72,8 +80,7 @@ export default {
         });
     },
 
-    // eslint-disable-next-line
-    getTrackById({ commit }, id) {
+    getTrackById({ commit, dispatch }, id) {
       axios.get(`tracks/${id}`)
         .then(result => commit('ADD_TRACK', result.data));
     },
@@ -83,6 +90,38 @@ export default {
       axios.put(`tracks/${data.id}/change-image`, data.image, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+    },
+
+    removeTrackImage({ rootState }, data) {
+      axios.put(`tracks/${data.id}/remove-image`, null, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
+        .catch(err => console.log(err));
+    },
+
+    checkHasImage({ }, id) {
+      axios.get(`tracks/${id}/has-image`)
+        .then(result => { return result.data.hasImage; });
+    },
+
+    like({ rootState, commit }, id) {
+      const { auth } = rootState.auth;
+      axios.post(`tracks/${id}/like`, null, {
+        headers: { Authorization: auth.token },
+      })
+        .then(() => commit('ADD_LIKE', { id, auth_id: auth.id }))
+        .then(() => auth.likes.push(id))
+        .catch(err => console.log(err));
+    },
+
+    dislike({ rootState, commit }, id) {
+      const { auth } = rootState.auth;
+      axios.post(`tracks/${id}/dislike`, null, {
+        headers: { Authorization: auth.token },
+      })
+        .then(() => commit('REMOVE_LIKE', { id, auth_id: auth.id }))
+        .then(() => auth.likes.splice(auth.likes.indexOf(id)))
+        .catch(err => console.log(err));
     },
 
   },
