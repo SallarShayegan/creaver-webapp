@@ -40,7 +40,8 @@
     </div>
     <div style="float:right">
       <image-input @imageAdded="profileImage = $event"
-                   :currentImage="editingData.profileImage"
+                   @imageRemoved="removeImage"
+                   :currentImage="editingData.imageUrl"
                    placeholder="./placeholders/profile.jpg"/>
     </div>
     <div style="clear:both"></div>
@@ -58,22 +59,21 @@ export default {
     return {
       editingData: {},
       profileImage: null,
+      deleteImage: false,
     };
   },
   methods: {
     saveChanges() {
-      if (this.profileImage) this.editingData.data.hasImage = true;
-      this.$store.dispatch('people/changePersonalData', this.editingData);
-      if (this.profileImage) {
-        this.$store.dispatch('people/changeProfileImage', {
-          id: this.editingData.id,
-          profileImage: this.profileImage,
-        });
-      }
+      this.$store.dispatch('people/changePersonalData', {
+        id: this.editingData.id,
+        data: this.editingData.data,
+        image: this.profileImage,
+        deleteImage: this.deleteImage,
+      });
       this.$emit('close');
     },
     removeImage() {
-      this.$store.dispatch('people/removeImage', { id: this.editingData.id });
+      if (this.editingData.hasImage) this.deleteImage = true;
     },
   },
   created() {

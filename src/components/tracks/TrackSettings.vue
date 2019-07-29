@@ -2,8 +2,9 @@
   <div>
     <h3>Edit track</h3>
     <track-input @input="editedData = $event"
-                 :editingTrack="id"
-                 @removeClicked="deleteTrack"/>
+                 :editingTrack="currentData"
+                 @removeClicked="deleteTrack"
+                 @imageRemoved="deleteImage = true"/>
     <div style="margin-top:20px">
       <div class="float-left">
         <button @click="deleteTrack" class="background-red">Remove track</button>
@@ -32,22 +33,27 @@ export default {
   data() {
     return {
       editedData: {},
+      currentData: {},
+      deleteImage: false,
     };
+  },
+  created() {
+    if (this.id) {
+      this.$store.dispatch('tracks/getTrackById', this.id)
+        .then(() => {
+          this.currentData = this.$store.getters['tracks/getTrackById'](this.id);
+          this.editedData.trackData = this.currentData.data;
+        });
+    }
   },
   methods: {
     editTrack() {
       this.$store.dispatch('tracks/editTrack', {
         id: this.id,
         newData: this.editedData.trackData,
+        image: this.editedData.image,
+        deleteImage: this.deleteImage,
       })
-        .then(() => {
-          if (this.editedData.image) {
-            this.$store.dispatch('tracks/changeTrackImage', {
-              id: this.id,
-              image: this.editedData.image,
-            });
-          }
-        })
         .then(() => this.$emit('close'));
     },
     deleteTrack() {

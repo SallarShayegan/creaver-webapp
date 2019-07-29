@@ -2,7 +2,7 @@
   <div class="header">
       <div class="header-content">
         <div class="profile-image"
-             :style="`background-image:url('${profileData.data.imageUrl}')`"></div>
+             :style="`background-image:url('${profileData.imageUrl}')`"></div>
         <div class="info">
           <span style="color:#ffffff">{{ profileData.data.name }}</span>
           <span class="small-text" style="margin-left:20px;">

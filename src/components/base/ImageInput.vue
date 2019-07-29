@@ -63,7 +63,10 @@ export default {
   watch: {
     currentImage() {
       this.addFile(null, this.currentImage ? this.currentImage : this.placeholder);
-    }
+    },
+  },
+  mounted() {
+    this.addFile(null, this.currentImage ? this.currentImage : this.placeholder);
   },
   computed: {
     borderStyle() {
@@ -177,7 +180,7 @@ export default {
       else if (current) image.src = current;
     },
     removeImage() {
-      this.currentImage = this.placeholder;
+      this.addFile(null, this.placeholder);
       this.$emit('imageRemoved');
     },
     prepareImage() {

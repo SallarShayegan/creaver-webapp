@@ -1,7 +1,7 @@
 <template>
   <div class="track-preview" @click="play">
     <div class="thumbnail"
-         :style="`background-image:url('${trackData.data.imageUrl}')`"></div>
+         :style="`background-image:url('${trackData.imageUrl}')`"></div>
     {{ trackData.data.name }}
     <span v-if="editable"
           class="edit-button"

@@ -23,7 +23,8 @@
     </div>
     <div style="float:right">
       <image-input @imageAdded="addImage($event)"
-                   :currentImage="trackData.imageUrl"
+                   @imageRemoved="removeImage"
+                   :currentImage="imageUrl"
                    placeholder="./placeholders/track.jpg"/>
     </div>
     <div style="clear:both"></div>
@@ -39,8 +40,7 @@ export default {
   },
   props: {
     editingTrack: {
-      default: '',
-      type: String,
+      type: Object,
     },
   },
   data() {
@@ -50,25 +50,19 @@ export default {
         discription: '',
         place: '',
         genre: '',
-        hasImage: false,
       },
       image: null,
+      imageUrl: '',
       trackFile: {},
     };
   },
-  created() {
-    if (this.editingTrack) {
-      this.$store.dispatch('tracks/getTrackById', this.editingTrack)
-        .then(() => {
-          const trackData = this.$store.getters['tracks/getTrackById'](this.editingTrack).data;
-          this.trackData.name = trackData.name;
-          this.trackData.discription = trackData.discription;
-          this.trackData.genre = trackData.genre;
-          this.trackData.place = trackData.place;
-          this.trackData.hasImage = trackData.hasImage;
-          this.trackData.imageUrl = trackData.imageUrl;
-        });
-    }
+  watch: {
+    editingTrack() {
+      if (this.editingTrack) {
+        this.trackData = JSON.parse(JSON.stringify(this.editingTrack.data));
+        this.imageUrl = this.editingTrack.imageUrl;
+      }
+    },
   },
   methods: {
     sendData() {
@@ -81,17 +75,15 @@ export default {
       this.$emit('input', result);
     },
     addTrack(event) {
-      // eslint-disable-next-line
-      this.trackFile = event.target.files[0];
+      [this.trackFile] = event.target.files;
       this.sendData();
     },
     addImage(image) {
       this.image = image;
-      this.trackData.hasImage = true;
       this.sendData();
     },
     removeImage() {
-      this.$store.dispatch('tracks/removeTrackImage', { id: this.editingTrack });
+      if (this.editingTrack.hasImage) this.$emit('imageRemoved');
     },
   },
 };

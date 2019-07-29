@@ -1,7 +1,7 @@
 <template>
   <div class="profile-preview" @click="showProfile">
     <div class="profile-image"
-         :style="`background-image:url('${profileData.data.imageUrl}')`"></div>
+         :style="`background-image:url('${profileData.imageUrl}')`"></div>
     {{ profileData.data.name }}
     <div class="abo" v-if="auth.id !== profileData.id">
       <button @click="follow" @blur="followClicked = false">

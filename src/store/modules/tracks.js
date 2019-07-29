@@ -1,5 +1,10 @@
 import axios from '../axiosConfig';
 
+const placeholder = './placeholders/track.jpg';
+function imageUrl(id) {
+  return `http://localhost:3000/images/tracks/${id}.jpg`;
+}
+
 export default {
   namespaced: true,
   state: {
@@ -8,21 +13,23 @@ export default {
   mutations: {
     ADD_TRACK(state, payload) {
       if (state.tracks.filter(track => payload.id === track.id).length === 0) {
-        const imageUrl = `http://localhost:3000/images/tracks/${payload.id}.jpg`;
-        const placeholder = './placeholders/track.jpg';
         // eslint-disable-next-line
-        payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
+        payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
         // eslint-disable-next-line
         state.tracks.push(payload);
       }
     },
     SET_TRACK_DATA(state, payload) {
-      const imageUrl = `http://localhost:3000/images/tracks/${payload.id}.jpg`;
-      const placeholder = './placeholders/track.jpg';
       // eslint-disable-next-line
-      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl : placeholder;
+      payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
       const tracks = state.tracks.filter(track => payload.id === track.id);
-      if (tracks.length !== 0) tracks[0].data = payload.data;
+
+      if (tracks.length !== 0) {
+        const track = tracks[0];
+        track.data = payload.data;
+        track.imageUrl = payload.imageUrl;
+        track.hasImage = payload.hasImage;
+      }
     },
     ADD_LIKE(state, payload) {
       const track = state.tracks.filter(t => t.id === payload.id)[0];
@@ -59,15 +66,20 @@ export default {
         .catch(err => console.log(err));
     },
 
-    editTrack({ rootState, commit, dispatch }, data) {
-      axios.put(`tracks/${data.id}`, { data: data.newData }, {
+    async editTrack({ rootState, commit, dispatch }, data) {
+      await axios.put(`tracks/${data.id}`, { data: data.newData }, {
         headers: { Authorization: rootState.auth.auth.token },
-      })
-        .then(() => {
-          commit('SET_TRACK_DATA', { id: data.id, data: data.newData });
-          dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' }, { root: true });
-        })
-        .catch(err => console.log(err));
+      });
+      if (data.image) {
+        await dispatch('changeTrackImage', {
+          id: data.id,
+          image: data.image,
+        });
+      } else if (data.deleteImage) {
+        await dispatch('removeTrackImage', data.id);
+      }
+      commit('SET_TRACK_DATA', { id: data.id, data: data.newData, hasImage: !data.deleteImage });
+      dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' }, { root: true });
     },
 
     deleteTrack({ rootState, dispatch }, data) {
@@ -80,9 +92,10 @@ export default {
         });
     },
 
-    getTrackById({ commit, dispatch }, id) {
+    getTrackById({ commit }, id) {
       axios.get(`tracks/${id}`)
-        .then(result => commit('ADD_TRACK', result.data));
+        .then(result => commit('ADD_TRACK', result.data))
+        .catch(err => console.log(err));
     },
 
     // eslint-disable-next-line
@@ -92,16 +105,11 @@ export default {
       });
     },
 
-    removeTrackImage({ rootState }, data) {
-      axios.put(`tracks/${data.id}/remove-image`, null, {
+    removeTrackImage({ rootState }, id) {
+      axios.put(`tracks/${id}/remove-image`, null, {
         headers: { Authorization: rootState.auth.auth.token },
       })
         .catch(err => console.log(err));
-    },
-
-    checkHasImage({ }, id) {
-      axios.get(`tracks/${id}/has-image`)
-        .then(result => { return result.data.hasImage; });
     },
 
     like({ rootState, commit }, id) {
@@ -122,6 +130,13 @@ export default {
         .then(() => commit('REMOVE_LIKE', { id, auth_id: auth.id }))
         .then(() => auth.likes.splice(auth.likes.indexOf(id)))
         .catch(err => console.log(err));
+    },
+
+    // unused:
+    // eslint-disable-next-line
+    checkHasImage({ }, id) {
+      axios.get(`tracks/${id}/has-image`)
+        .then(result => result.data.hasImage);
     },
 
   },

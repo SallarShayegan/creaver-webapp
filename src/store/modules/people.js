@@ -10,11 +10,12 @@ export default {
   namespaced: true,
   state: {
     profileData: {
-      data: { imageUrl: placeholder },
+      data: {},
       id: '',
       tracks: [],
       following: [],
       followers: [],
+      imageUrl: placeholder,
     },
     people: [],
   },
@@ -22,7 +23,7 @@ export default {
     SET_ALL_PERSONAL_DATA(state, payload) {
       payload.forEach((person) => {
         // eslint-disable-next-line
-        person.data.imageUrl = (person.data.hasImage) ? imageUrl(person.id) : placeholder;
+        person.imageUrl = (person.hasImage) ? imageUrl(person.id) : placeholder;
       });
       // eslint-disable-next-line
       state.people = payload;
@@ -30,13 +31,13 @@ export default {
     ADD_PERSONS_DATA(state, payload) {
       if (state.people.filter(person => payload.id === person.id).length === 0) {
         // eslint-disable-next-line
-        payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+        payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
         state.people.push(payload);
       }
     },
     SET_PROFILE_DATA(state, payload) {
       // eslint-disable-next-line
-      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+      payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
 
       // eslint-disable-next-line
       state.profileData = payload;
@@ -44,12 +45,12 @@ export default {
     RESET_PROFILE_DATA(state) {
       // eslint-disable-next-line
       state.profileData = {
-        data: { imageUrl: placeholder },
+        data: {},
         id: '',
         tracks: [],
         following: [],
         followers: [],
-        hasProfilePic: false,
+        imageUrl: placeholder,
       };
     },
     ADD_FOLLOWER(state, payload) {
@@ -97,19 +98,22 @@ export default {
         .catch(() => dispatch('sendNote', { message: 'Please fill form correctly.' }, { root: true }));
     },
 
-    changePersonalData({ rootState, dispatch }, data) {
-      axios.put(`people/${data.id}`, { data: data.data }, {
+    async changePersonalData({ rootState, dispatch }, data) {
+      await axios.put(`people/${data.id}`, { data: data.data }, {
         headers: { Authorization: rootState.auth.auth.token },
-      })
-        .then(() => {
-          dispatch('refreshAuthData', null, { root: true });
-          dispatch('sendNote', { type: 'info', message: 'Edited successfully.' }, { root: true });
-        })
-        .catch(err => console.log(err));
+      });
+      if (data.image) {
+        await dispatch('changeProfileImage', {
+          id: data.id,
+          profileImage: data.image,
+        });
+      } else if (data.deleteImage) await dispatch('removeProfileImage', data.id);
+      await dispatch('refreshAuthData', null, { root: true });
+      dispatch('sendNote', { type: 'info', message: 'Edited successfully.' }, { root: true });
     },
 
-    removeImage({ rootState }, data) {
-      axios.put(`people/${data.id}/remove-image`, null, {
+    removeProfileImage({ rootState }, id) {
+      axios.put(`people/${id}/remove-image`, null, {
         headers: { Authorization: rootState.auth.auth.token },
       })
         .catch(err => console.log(err));

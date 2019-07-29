@@ -19,13 +19,13 @@ export default {
   mutations: {
     SET_AUTH_DATA(state, payload) {
       // eslint-disable-next-line
-      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+      payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
       // eslint-disable-next-line
       state.auth = payload;
     },
     REFRESH_AUTH_DATA(state, payload) {
       // eslint-disable-next-line
-      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.id) : placeholder;
+      payload.data.imageUrl = (payload.data.hasImage) ? imageUrl(payload.data.id) : placeholder;
       // eslint-disable-next-line
       state.auth = payload.data;
       // eslint-disable-next-line
