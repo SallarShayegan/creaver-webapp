@@ -1,20 +1,28 @@
 <template>
   <div class="track-preview" @click="play">
-    <div class="thumbnail"
-         :style="`background-image:url('${trackData.imageUrl}')`"></div>
+    <div class="track-image"
+         :style="`background-image:url('${trackData.imageUrl}');
+                  width:${imageSize};height:${imageSize}`">
+    </div>
     {{ trackData.data.name }}
     <span v-if="editable"
           class="edit-button"
           @click="editClicked = true; $emit('editClicked')">
       <i class="fas fa-pen"></i>
     </span>
-    <div class="small-text" style="float:right">
-      {{ trackData.plays }} plays | {{ trackData.likes.length }} likes |
-      <span id="like" :class="liked ? 'liked' : 'faded'" @click="like">
-        <i class="fas fa-heart"></i>
+    <div class="small-text faded" style="float:right">
+      <i class="fas fa-play"></i> {{ trackData.plays }}
+      <span @click="like" v-if="!noLike" style="margin-left:7px">
+        <span id="like" :class="liked ? 'liked' : 'faded'">
+          <i class="fas fa-heart"></i>
+        </span>
+        {{ trackData.likes.length }}
       </span>
     </div>
-    <div class="small-text" style="margin-top:10px;">{{ trackData.data.discription }}</div>
+    <div class="small-text">{{ artistData.data.name }}</div>
+    <div class="small-text faded" v-if="!noDescription" style="margin-top:10px;">
+      {{ trackData.data.discription }}
+    </div>
     <div style="clear:both"></div>
   </div>
 </template>
@@ -33,6 +41,18 @@ export default {
       default: false,
       type: Boolean,
     },
+    noDescription: {
+      default: false,
+      type: Boolean,
+    },
+    noLike: {
+      default: false,
+      type: Boolean,
+    },
+    imageSize: {
+      default: '70px',
+      type: String,
+    },
   },
   data() {
     return {
@@ -42,6 +62,11 @@ export default {
   },
   created() {
     this.$store.dispatch('tracks/getTrackById', this.id);
+  },
+  watch: {
+    trackData() {
+      if (this.trackData.artist_id) this.$store.dispatch('people/getPersonalDataById', this.trackData.artist_id);
+    },
   },
   methods: {
     play() {
@@ -62,6 +87,9 @@ export default {
     },
     liked() {
       return this.trackData.likes.includes(this.auth.id);
+    },
+    artistData() {
+      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
     },
     ...mapState({ auth: state => state.auth.auth }),
   },
@@ -91,7 +119,7 @@ export default {
 .track-preview:hover .edit-button {
   display: initial;
 }
-.thumbnail {
+.track-image {
   background: #f0f0f0;
   background-size: 100%;
   width: 70px;

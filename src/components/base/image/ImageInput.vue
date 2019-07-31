@@ -41,6 +41,8 @@
 </template>
 
 <script>
+import exifReader from './exifReader';
+
 export default {
   props: {
     currentImage: String,
@@ -57,7 +59,9 @@ export default {
       border: {
         top: 0, left: 0, lastLeft: 0, lastTop: 0, size: 0, lastSize: 0,
       },
-      canvas: { width: 0, height: 0, src: '' },
+      canvas: {
+        width: 0, height: 0, src: '', rotation: 0,
+      },
     };
   },
   watch: {
@@ -168,16 +172,43 @@ export default {
         canvas.height = canvas.width * (image.height / image.width);
         this.canvas.height = canvas.height;
         this.canvas.width = canvas.width;
-        const canvas2 = canvas.getContext('2d');
-        canvas2.drawImage(image, 0, 0, canvas.width, canvas.height);
+        const context = canvas.getContext('2d');
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        /*
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.save();
+        context.translate(canvas.width / 2, canvas.height / 2);
+        context.rotate(this.canvas.rotation * Math.PI / 180);
+        context.drawImage(image, 0, 0, -canvas.width / 2, -canvas.width / 2);
+        context.restore();
+        */
         this.border.size = (canvas.width > canvas.height) ? canvas.height : canvas.width;
         if (event) {
           this.canvas.src = canvas.toDataURL('image/jpeg');
           this.prepareImage();
         }
       };
-      if (event) image.src = URL.createObjectURL(event.target.files[0]);
-      else if (current) image.src = current;
+      if (event) {
+        image.src = URL.createObjectURL(event.target.files[0]);
+        const fileReader = new FileReader();
+        fileReader.onload = (e) => {
+          const orientation = exifReader(e.target.result).Orientation;
+          switch (orientation) {
+            case 8:
+              this.canvas.rotation = -90;
+              break;
+            case 3:
+              this.canvas.rotation = 180;
+              break;
+            case 6:
+              this.canvas.rotation = 90;
+              break;
+            default:
+              this.canvas.rotation = 0;
+          }
+        };
+        fileReader.readAsDataURL(event.target.files[0]);
+      } else if (current) image.src = current;
     },
     removeImage() {
       this.addFile(null, this.placeholder);
@@ -207,10 +238,11 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped lang="scss">
-@import '../../style/variables';
+@import '../../../style/variables';
 
 .upload-btn-wrapper {
   position: relative;

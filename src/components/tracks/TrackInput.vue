@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import ImageInput from '@/components/base/ImageInput.vue';
+import ImageInput from '@/components/base/image/ImageInput.vue';
 
 export default {
   components: {

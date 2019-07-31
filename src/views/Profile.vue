@@ -38,7 +38,20 @@
                             @close="viewPort = 'tracks'"/>
       </div>
       <div class="sidebar">
-        0 monthly listeners
+        <h3>Search</h3>
+        <input type="text" style="width:80%" placeholder="track or artist name"/>
+        <button class="search-btn"><i class="fas fa-search"></i></button>
+        <div style="height:20px"></div>
+        <h3>Recent likes</h3>
+        <track-preview v-for="track in recentLikes"
+                       :key="track"
+                       :id="track"
+                       noDescription
+                       noLike
+                       imageSize="50px"/>
+        <span v-if="recentLikes.length < 1">
+          {{ profileData.data.name }} hasn't added any tracks yet.
+        </span>
       </div>
     </div>
     <div class="after-body"></div>
@@ -88,6 +101,11 @@ export default {
       if (this.isOwnProfile) return this.auth;
       return this.$store.state.people.profileData;
     },
+    recentLikes() {
+      const { likes } = this.profileData;
+      if (!likes) return [];
+      return likes.slice(-4, likes.length).reverse();
+    },
   },
 };
 </script>
@@ -113,6 +131,12 @@ export default {
   background: #f4f4f4;
   grid-column: 3;
   padding: 30px 40px;
+}
+
+.search-btn {
+  padding: 10px;
+  margin-left: 10px;
+  border-radius: 50%;
 }
 
 .mainbar {
