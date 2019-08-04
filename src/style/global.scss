@@ -38,22 +38,6 @@ button:hover {
   background: white;
 }
 
-.background-red {
-  background: $red;
-}
-
-.background-red:hover {
-  background: $red_dark;
-}
-
-.background-green {
-  background: $green;
-}
-
-.background-green:hover {
-  background: $green_dark;
-}
-
 a {
   color: $primary_dark;
   text-decoration: none;
@@ -75,6 +59,38 @@ textarea {
   font-size: 10pt;
   color: $secondary;
   outline: none;
+}
+
+.border-primary {
+  border-color: $primary;
+}
+
+.border-red {
+  border-color: $red;
+}
+
+.color-primary {
+  color: $primary;
+}
+
+.color-red {
+  color: $red;
+}
+
+.background-red {
+  background: $red;
+}
+
+.background-red:hover {
+  background: $red_dark;
+}
+
+.background-green {
+  background: $green;
+}
+
+.background-green:hover {
+  background: $green_dark;
 }
 
 .container {

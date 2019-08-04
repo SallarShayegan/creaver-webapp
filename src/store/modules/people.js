@@ -89,6 +89,12 @@ export default {
         .catch(() => dispatch('sendNote', { message: 'Person not found.' }, { root: true }));
     },
 
+    loadProfileData({ commit }, username) {
+      axios.get(`people/profile/${username}`)
+        .then(result => commit('SET_PROFILE_DATA', result.data))
+        .catch(err => console.log(err));
+    },
+
     addNewPerson({ dispatch }, data) {
       axios.post('people', data)
         .then(() => {
@@ -99,7 +105,7 @@ export default {
     },
 
     async changePersonalData({ rootState, dispatch }, data) {
-      await axios.put(`people/${data.id}`, { data: data.data }, {
+      await axios.put('auth/edit-profile', { data: data.data }, {
         headers: { Authorization: rootState.auth.auth.token },
       });
       if (data.image) {
@@ -112,16 +118,19 @@ export default {
       dispatch('sendNote', { type: 'info', message: 'Edited successfully.' }, { root: true });
     },
 
-    removeProfileImage({ rootState }, id) {
-      axios.put(`people/${id}/remove-image`, null, {
-        headers: { Authorization: rootState.auth.auth.token },
-      })
-        .catch(err => console.log(err));
+    changeProfileImage({ rootState }, data) {
+      axios.put('auth/change-image', data.profileImage, {
+        headers: {
+          Authorization: rootState.auth.auth.token,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
     },
 
-    loadProfileData({ commit }, username) {
-      axios.get(`people/profile/${username}`)
-        .then(result => commit('SET_PROFILE_DATA', result.data))
+    removeProfileImage({ rootState }) {
+      axios.put('auth/remove-image', null, {
+        headers: { Authorization: rootState.auth.auth.token },
+      })
         .catch(err => console.log(err));
     },
 
@@ -129,7 +138,7 @@ export default {
       if (!rootState.auth.auth.token) dispatch('sendNote', { type: 'error', message: 'First sign in.' }, { root: true });
       else if (data.following_id === data.follower_id) dispatch('sendNote', { type: 'error', message: "Can't follow yourself!" }, { root: true });
       else {
-        axios.put(`people/${data.follower_id}/follow/${data.following_id}`, null, {
+        axios.put(`auth/follow/${data.following_id}`, null, {
           headers: { Authorization: rootState.auth.auth.token },
         })
           .then(() => dispatch('refreshAuthData', null, { root: true }))
@@ -139,19 +148,12 @@ export default {
     },
 
     unfollow({ rootState, dispatch, commit }, data) {
-      axios.put(`people/${data.follower_id}/unfollow/${data.following_id}`, null, {
+      axios.put(`auth/unfollow/${data.following_id}`, null, {
         headers: { Authorization: rootState.auth.auth.token },
       })
         .then(() => dispatch('refreshAuthData', null, { root: true }))
         .then(() => commit('REMOVE_FOLLOWER', data))
         .catch(err => console.log(err));
-    },
-
-    // eslint-disable-next-line
-    changeProfileImage({ }, data) {
-      axios.put(`people/${data.id}/change-image`, data.profileImage, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
     },
 
   },

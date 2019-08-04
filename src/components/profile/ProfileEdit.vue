@@ -2,39 +2,54 @@
   <div class="edit-profile">
     <h3>Edit profile</h3>
     <div style="float:left">
-      <input
-            type="text"
+      <textbox
             v-model="editingData.data.username"
-            placeholder="Username"/>
-      <input
-            type="text"
+            placeholder="Username"
+            validation="not-empty username"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             v-model="editingData.data.name"
-            placeholder="Name"/>
-      <input
-            type="text"
+            placeholder="Name"
+            validation="not-empty"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             v-model="editingData.data.email"
-            placeholder="Email address"/>
-      <input
-            type="text"
+            placeholder="Email address"
+            validation="not-empty email"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             v-model="editingData.data.phone"
-            placeholder="Phone number"/>
-      <input
+            placeholder="Phone number"
+            validation="phone"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             type="date"
             v-model="editingData.data.birth_date"
-            placeholder="Date of birth"/>
-      <input
-            type="text"
+            placeholder="Date of birth"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             v-model="editingData.data.city"
-            placeholder="City"/>
-      <input
-            type="text"
+            placeholder="City"
+            validation="name"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
             v-model="editingData.data.country"
-            placeholder="Country"/>
+            placeholder="Country"
+            validation="name"
+            @input="error = false"
+            @error="error = true"/>
       <div class="column-100" style="float:right;margin-top:20px">
         <button @click="$emit('close')"
                 class="background-red"
                 style="margin-right: 10px;">Cancel</button>
-        <button @click="saveChanges" class="margin-top">Save changes</button>
+        <button @click="saveChanges"
+                class="margin-top">Save changes</button>
       </div>
       <div style="clear:right"></div>
     </div>
@@ -50,27 +65,32 @@
 
 <script>
 import ImageInput from '@/components/base/image/ImageInput.vue';
+import Textbox from '@/components/base/Textbox.vue';
 
 export default {
   components: {
     ImageInput,
+    Textbox,
   },
   data() {
     return {
       editingData: {},
       profileImage: null,
       deleteImage: false,
+      error: false,
     };
   },
   methods: {
     saveChanges() {
+      if (this.error) return this.$store.dispatch('sendNote', { message: 'Please correct marked fields.' });
+
       this.$store.dispatch('people/changePersonalData', {
         id: this.editingData.id,
         data: this.editingData.data,
         image: this.profileImage,
         deleteImage: this.deleteImage,
       });
-      this.$emit('close');
+      return this.$emit('close');
     },
     removeImage() {
       if (this.editingData.hasImage) this.deleteImage = true;
@@ -85,11 +105,6 @@ export default {
 <style scoped>
 .edit-profile {
   margin-bottom: 20px;
-}
-input {
-  display: block;
-  margin-top:10px;
-  min-width: 200px;
 }
 .margin-top {
   margin-top: 15px;

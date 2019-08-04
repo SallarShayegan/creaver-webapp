@@ -1,19 +1,20 @@
 <template>
   <div class="add-track">
     <div style="float:left">
-      <input type="text"
+      <textbox
             v-model="trackData.name"
             placeholder="Track name"
-            @change="sendData"/>
-      <input type="text"
+            @change="sendData"
+            validation="not-empty"/>
+      <textbox
             v-model="trackData.discription"
             placeholder="Discription"
             @change="sendData"/>
-      <input type="text"
+      <textbox
             v-model="trackData.place"
             placeholder="Creation place"
             @change="sendData"/>
-      <input type="text"
+      <textbox
             v-model="trackData.genre"
             placeholder="Genre"
             @change="sendData"/>
@@ -33,10 +34,12 @@
 
 <script>
 import ImageInput from '@/components/base/image/ImageInput.vue';
+import Textbox from '@/components/base/Textbox.vue';
 
 export default {
   components: {
     ImageInput,
+    Textbox,
   },
   props: {
     editingTrack: {
