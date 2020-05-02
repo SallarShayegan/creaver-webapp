@@ -1,6 +1,6 @@
 import axios from '../axiosConfig';
 
-const placeholder = './placeholders/track.jpg';
+const placeholder = '/placeholders/track.png';
 function imageUrl(id) {
   return `http://localhost:3000/images/tracks/${id}.jpg`;
 }
@@ -9,6 +9,11 @@ export default {
   namespaced: true,
   state: {
     tracks: [],
+    trackData: {
+      id: '',
+      data: {},
+      imageUrl: placeholder,
+    },
   },
   mutations: {
     ADD_TRACK(state, payload) {
@@ -30,6 +35,14 @@ export default {
         track.imageUrl = payload.imageUrl;
         track.hasImage = payload.hasImage;
       }
+    },
+    RESET_TRACK_DATA(state) {
+      // eslint-disable-next-line
+      state.trackData = {
+        id: '',
+        data: {},
+        imageUrl: placeholder,
+      };
     },
     ADD_LIKE(state, payload) {
       const track = state.tracks.filter(t => t.id === payload.id)[0];
@@ -78,7 +91,7 @@ export default {
       } else if (data.deleteImage) {
         await dispatch('removeTrackImage', data.id);
       }
-      commit('SET_TRACK_DATA', { id: data.id, data: data.newData, hasImage: !data.deleteImage });
+      commit('SET_TRACK_DATA', { id: data.id, data: data.newData, hasImage: !data.deleteImage && data.image });
       dispatch('sendNote', { type: 'info', message: 'Edited track successfully.' }, { root: true });
     },
 

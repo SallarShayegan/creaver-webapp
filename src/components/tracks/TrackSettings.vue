@@ -48,6 +48,7 @@ export default {
   },
   methods: {
     editTrack() {
+      if (this.editedData.image) this.deleteImage = false;
       this.$store.dispatch('tracks/editTrack', {
         id: this.id,
         newData: this.editedData.trackData,

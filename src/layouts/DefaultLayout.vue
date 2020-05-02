@@ -39,6 +39,7 @@ export default {
 .alert-container {
   opacity: 0.7;
   position: fixed;
+  z-index: 10000;
   max-width: 400px;
   top: 20px;
   right: 20px;

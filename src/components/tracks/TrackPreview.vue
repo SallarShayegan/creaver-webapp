@@ -71,7 +71,7 @@ export default {
   methods: {
     play() {
       if (!this.editClicked && !this.likeClicked) {
-        window.location = `http://localhost:3000/tracks/${this.id}.mp3`;
+        this.$router.push(`${this.artistData.data.username}/${this.id}`);
       }
     },
     like() {

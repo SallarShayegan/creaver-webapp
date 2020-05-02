@@ -26,7 +26,7 @@
       <image-input @imageAdded="addImage($event)"
                    @imageRemoved="removeImage"
                    :currentImage="imageUrl"
-                   placeholder="./placeholders/track.jpg"/>
+                   placeholder="./placeholders/track.png"/>
     </div>
     <div style="clear:both"></div>
   </div>
@@ -86,7 +86,7 @@ export default {
       this.sendData();
     },
     removeImage() {
-      if (this.editingTrack.hasImage) this.$emit('imageRemoved');
+      if (this.editingTrack && this.editingTrack.hasImage) this.$emit('imageRemoved');
     },
   },
 };

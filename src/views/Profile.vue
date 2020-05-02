@@ -39,9 +39,9 @@
       </div>
       <div class="sidebar">
         <h3>Search</h3>
-        <input type="text" style="width:80%" placeholder="track or artist name"/>
-        <button class="search-btn"><i class="fas fa-search"></i></button>
-        <div style="height:20px"></div>
+        <input type="text" style="float:left" placeholder="track or artist name"/>
+        <button class="search-btn" style="float:right"><i class="fas fa-search"></i></button>
+        <div style="height:20px;clear:both"></div>
         <h3>Recent likes</h3>
         <track-preview v-for="track in recentLikes"
                        :key="track"
@@ -123,14 +123,14 @@ export default {
 
 .profile-body {
   display: grid;
-  grid-template-columns: auto 20px auto;
-  // grid-gap: 20px;
+  grid-template-columns: 350px 20px auto;
 }
 
 .sidebar {
   background: #f4f4f4;
-  grid-column: 3;
-  padding: 30px 40px;
+  grid-column: 1;
+  grid-row: 1;
+  padding: 30px 60px 30px 0;
 }
 
 .search-btn {
@@ -140,7 +140,7 @@ export default {
 }
 
 .mainbar {
-  grid-column: 1;
+  grid-column: 3;
   padding: 10px;
   min-width: 600px;
 }
@@ -156,17 +156,21 @@ export default {
 }
 
 .before-body {
+  background: #f4f4f4;
   grid-column: 1;
 }
 
 .after-body {
   grid-column: 3;
-  background: #f4f4f4;
 }
 
 @media screen and (max-width: 800px) {
   .container {
     grid-template-columns: auto 750px auto;
+  }
+
+  .profile-body {
+    grid-template-columns: 100%;
   }
 
   .mainbar {

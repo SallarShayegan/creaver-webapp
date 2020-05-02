@@ -42,6 +42,8 @@
 
 <script>
 import exifReader from './exifReader';
+import { createHash } from 'crypto';
+import { URL } from 'url';
 
 export default {
   props: {
@@ -216,25 +218,25 @@ export default {
     },
     prepareImage() {
       // Build cropped image:
-      const canvasFile = document.createElement('canvas');
-      const jpeg = new Image();
+      const canvas = document.createElement('canvas');
+      const cropped = new Image();
 
-      jpeg.onload = () => {
-        canvasFile.height = this.border.size;
-        canvasFile.width = this.border.size;
-        const canvasFile2 = canvasFile.getContext('2d');
-        canvasFile2.drawImage(jpeg, this.border.left, this.border.top,
+      cropped.onload = () => {
+        canvas.height = this.border.size;
+        canvas.width = this.border.size;
+        const context = canvas.getContext('2d');
+        context.drawImage(cropped, this.border.left, this.border.top,
           this.border.size, this.border.size,
           0, 0, this.border.size, this.border.size);
 
-        canvasFile.toBlob((blob) => {
+        canvas.toBlob((blob) => {
           const imageFile = new FormData();
           imageFile.append('image', blob);
           this.image = imageFile;
           this.$emit('imageAdded', imageFile);
         });
       };
-      jpeg.src = this.canvas.src;
+      cropped.src = this.canvas.src;
     },
   },
 };

@@ -5,6 +5,7 @@ import SignUp from '@/views/SignUp.vue';
 import Login from '@/views/Login.vue';
 import Settings from '@/views/Settings.vue';
 import Profile from '@/views/Profile.vue';
+import Track from '@/views/Track.vue';
 
 Vue.use(Router);
 
@@ -36,6 +37,11 @@ export default new Router({
       path: '/:username',
       name: 'profile',
       component: Profile,
+    },
+    {
+      path: '/:username/:trackId',
+      name: 'track',
+      component: Track,
     },
   ],
 });
