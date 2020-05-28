@@ -8,7 +8,7 @@
     </div>
     <div class="column right padding">
       <dropdown v-if="auth.token"
-                :text="`Welcome ${auth.data.name}!`"
+                :text="`Yo ${auth.data.name}!`"
                 class="float-right dropdown">
         <router-link to="/settings">Settings</router-link>
         <router-link :to="`/${auth.data.username}`">
@@ -22,7 +22,6 @@
         <router-link to="/sign-up">Sign up</router-link>
         <router-link to="/login">Login</router-link>
       </div>
-      <router-link to="/contact">Contact us</router-link>
     </div>
   </div>
 </template>

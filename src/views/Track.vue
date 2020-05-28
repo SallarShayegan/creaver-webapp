@@ -9,12 +9,22 @@
         {{ trackData.data.name }}<br>
         <span class="small-text">
         {{ trackData.data.discription }}<br><br>
+        Artist: <router-link :to="`/${artistData.data.username}`">
+                {{ artistData.data.name }}
+                </router-link><br>
         Genre: {{ trackData.data.genre }}<br>
         Creation place: {{ trackData.data.place }}
         </span>
+        <br><br>
+        <h4>Comments (0)</h4>
+        <div class="track-comments">
+          no comments yet
+        </div>
       </div>
       <div class="visubar">
-        <div class="visubox"></div>
+        <div class="visubox">
+          <div>Visuals</div>
+        </div>
       </div>
     </div>
     <div class="after-body"></div>
@@ -24,7 +34,9 @@
 <script>
 export default {
   beforeCreate() {
-    this.$store.dispatch('tracks/getTrackById', this.$route.params.trackId);
+    const id = this.$route.params.trackId;
+    this.$store.dispatch('tracks/getTrackById', id);
+    this.$store.commit('tracks/SET_CURRENT_TRACK', id);
   },
   destroyed() {
     this.$store.commit('tracks/RESET_TRACK_DATA');
@@ -32,6 +44,9 @@ export default {
   computed: {
     trackData() {
       return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || { data: {}, likes: [] };
+    },
+    artistData() {
+      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
     },
   },
 };
@@ -60,19 +75,32 @@ export default {
   background-size: 100%;
   margin-bottom: 10px;
 }
+.track-comments {
+  font-size: 11pt;
+  color:#cccccc;
+}
 .visubar {
   grid-column: 2;
   display: grid;
   grid-template-columns: auto 600px auto;
-  // background: #000000;
+  background: #202020;
   padding: 50px 0;
   min-width: 600px;
 }
 .visubox {
-  background: #030303;
+  background: #030303 url('../../public/kreis-muster-01.png');
   grid-column: 2;
   width: 600px;
   height: 600px;
+  display: grid;
+  grid-template-columns: auto 200 auto;
+  grid-template-rows: auto 200 auto;
+}
+.visubox div {
+  grid-row: 2;
+  grid-column: 2;
+  color: #cccccc;
+  font-size: 30pt;
 }
 .before-body {
   background: #f4f4f4;
@@ -80,6 +108,7 @@ export default {
 }
 .after-body {
   grid-column: 3;
+  background: #202020;
 }
 
 @media screen and (max-width: 800px) {

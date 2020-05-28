@@ -41,9 +41,9 @@
 </template>
 
 <script>
-import exifReader from './exifReader';
-import { createHash } from 'crypto';
+// import { createHash } from 'crypto';
 import { URL } from 'url';
+import exifReader from './exifReader';
 
 export default {
   props: {
@@ -191,6 +191,7 @@ export default {
         }
       };
       if (event) {
+        console.log(URL);
         image.src = URL.createObjectURL(event.target.files[0]);
         const fileReader = new FileReader();
         fileReader.onload = (e) => {

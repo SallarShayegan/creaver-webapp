@@ -1,5 +1,5 @@
 <template>
-  <div class="track-preview" @click="play">
+  <div class="track-preview" @click="play" :class="border">
     <div class="track-image"
          :style="`background-image:url('${trackData.imageUrl}');
                   width:${imageSize};height:${imageSize}`">
@@ -53,6 +53,10 @@ export default {
       default: '70px',
       type: String,
     },
+    noBorder: {
+      default: false,
+      type: Boolean,
+    },
   },
   data() {
     return {
@@ -91,6 +95,10 @@ export default {
     artistData() {
       return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
     },
+    border() {
+      if (this.noBorder) return 'no-border';
+      return '';
+    },
     ...mapState({ auth: state => state.auth.auth }),
   },
 };
@@ -112,6 +120,9 @@ export default {
   padding: 10px;
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
+}
+.no-border {
+  border: 0;
 }
 .track-preview:hover {
   background: #fafafd;

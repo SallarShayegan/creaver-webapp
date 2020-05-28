@@ -14,6 +14,7 @@ export default {
       data: {},
       imageUrl: placeholder,
     },
+    currentTrackId: '',
   },
   mutations: {
     ADD_TRACK(state, payload) {
@@ -24,9 +25,14 @@ export default {
         state.tracks.push(payload);
       }
     },
+    SET_CURRENT_TRACK(state, id) {
+      state.currentTrackId = id;
+    },
     SET_TRACK_DATA(state, payload) {
       // eslint-disable-next-line
       payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
+      // eslint-disable-next-line
+      payload.url = trackUrl(payload.id);
       const tracks = state.tracks.filter(track => payload.id === track.id);
 
       if (tracks.length !== 0) {

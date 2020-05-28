@@ -17,15 +17,15 @@
         <button v-else class="outlined" @click="follow">
           Follow{{ (followed) ? 'ed' : '' }}
         </button>
-        <div class="abo">
+        <div class="abo2">
           <div class="follow"
                style="border-right: 1px solid #ffffff"
                @click="$emit('showFollowing')">
-                  {{ profileData.following.length }}<br>
+                  <!--{{ profileData.following.length }}<br>//-->
                   <span class="small-text">Following</span>
           </div>
           <div class="follow" @click="$emit('showFollowers')">
-            {{ profileData.followers.length }}<br>
+            <!--{{ profileData.followers.length }}<br>//-->
             <span class="small-text">Followers</span>
           </div>
         </div>
@@ -91,6 +91,11 @@ export default {
 }
 .abo {
   float: right;
+}
+.abo2 {
+  position: relative;
+  top: 15px;
+  left: 200px;
 }
 .follow {
   display: inline-block;
