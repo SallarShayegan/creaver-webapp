@@ -2,9 +2,13 @@
   <div class="container">
     <div class="before-header"></div>
     <profile-header :profileData="profileData"
+                    ref="header"
                     @editClicked="viewPort = 'editProfile';"
+                    @showTracks="viewPort = 'tracks'"
+                    @showLikes="viewPort = 'likes'"
                     @showFollowing="viewPort = 'connection'; followType = 'following'"
-                    @showFollowers="viewPort = 'connection'; followType = 'followers'"/>
+                    @showFollowers="viewPort = 'connection'; followType = 'followers'"
+    />
     <div class="after-header"></div>
     <div class="before-body"></div>
     <div class="profile-body">
@@ -26,22 +30,22 @@
             </div>
           </div>
         </div>
+        <profile-likes v-if="viewPort === 'likes'"/>
         <track-upload v-if="viewPort === 'upload'"
                       @close="viewPort = 'tracks'"/>
         <track-settings v-if="viewPort === 'editTrack'"
                     :id="editingTrack"
                     @close="viewPort = 'tracks'"/>
-        <profile-edit v-if="viewPort === 'editProfile'" @close="viewPort = 'tracks'"/>
+        <profile-edit v-if="viewPort === 'editProfile'"
+                      @close="viewPort = 'tracks'; $refs.header.activateTab('Tracks')"/>
         <profile-connection v-if="viewPort === 'connection'"
                             :type="followType"
                             :profileData="profileData"
-                            @close="viewPort = 'tracks'"/>
+                            @close="viewPort = 'tracks'; $refs.header.activateTab('Tracks')"/>
       </div>
+
       <div class="sidebar">
-        <h3>Search</h3>
-        <input type="text" style="float:left" placeholder="track or artist name"/>
-        <button class="search-btn" style="float:right"><i class="fas fa-search"></i></button>
-        <div style="height:20px;clear:both"></div>
+        <div class="bio">{{ profileData.data.bio }}</div>
         <h3>Recent likes</h3>
         <track-preview v-for="track in recentLikes"
                        :key="track"
@@ -50,9 +54,10 @@
                        noLike
                        imageSize="50px"/>
         <span v-if="recentLikes.length < 1">
-          {{ profileData.data.name }} hasn't added any tracks yet.
+          {{ profileData.data.name }} hasn't liked any tracks yet.
         </span>
       </div>
+
     </div>
     <div class="after-body"></div>
   </div>
@@ -66,6 +71,7 @@ import TrackSettings from '@/components/tracks/TrackSettings.vue';
 import ProfileHeader from '@/components/profile/ProfileHeader.vue';
 import ProfileEdit from '@/components/profile/ProfileEdit.vue';
 import ProfileConnection from '@/components/profile/ProfileConnection.vue';
+import ProfileLikes from '@/components/profile/ProfileLikes.vue';
 
 export default {
   components: {
@@ -75,6 +81,7 @@ export default {
     ProfileHeader,
     ProfileEdit,
     ProfileConnection,
+    ProfileLikes,
   },
   data() {
     return {
@@ -106,6 +113,15 @@ export default {
       if (!likes) return [];
       return likes.slice(-4, likes.length).reverse();
     },
+    username() {
+      return this.$route.params.username;
+    },
+  },
+  watch: {
+    profileData() {
+      this.viewPort = 'tracks';
+      this.$refs.header.activateTab('Tracks');
+    },
   },
 };
 </script>
@@ -133,10 +149,8 @@ export default {
   padding: 30px 60px 30px 0;
 }
 
-.search-btn {
-  padding: 10px;
-  margin-left: 10px;
-  border-radius: 50%;
+.bio {
+  margin-bottom: 40px;
 }
 
 .mainbar {

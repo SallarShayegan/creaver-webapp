@@ -1,10 +1,11 @@
 <template>
   <div>
-    <h3 style="float:left">{{ profileData.data.name }}'s {{ type }}</h3>
+    <h3 style="float:left">{{ profileData.data.name }}'s {{ type }} ({{ list.length }})</h3>
     <div class="float-right" style="margin-top:20px">
+      <!--
       <button @click="$emit('close')"
               class="background-red"
-              style="margin-right: 10px;">Close</button>
+              style="margin-right: 10px;">Close</button>//-->
     </div>
     <div style="clear:both"></div>
     <span v-if="list.length < 1">{{ profileData.data.name }} hasn't got any {{ type }} yet.</span>

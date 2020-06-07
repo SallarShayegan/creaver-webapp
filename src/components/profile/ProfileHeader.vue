@@ -13,21 +13,19 @@
         </div>
         <button v-if="isOwnProfile"
                 class="outlined"
-                @click="$emit('editClicked')">Edit profile</button>
+                @click="$emit('editClicked'); activeTab=''">Edit profile</button>
         <button v-else class="outlined" @click="follow">
           Follow{{ (followed) ? 'ed' : '' }}
         </button>
         <div class="abo2">
-          <div class="follow"
-               style="border-right: 1px solid #ffffff"
-               @click="$emit('showFollowing')">
-                  <!--{{ profileData.following.length }}<br>//-->
-                  <span class="small-text">Following</span>
-          </div>
-          <div class="follow" @click="$emit('showFollowers')">
-            <!--{{ profileData.followers.length }}<br>//-->
-            <span class="small-text">Followers</span>
-          </div>
+          <div class="tab" :style="tabStyle.tracks" @click="activeTab = 'Tracks'">Tracks</div>
+          <div class="tab" :style="tabStyle.likes" @click="activeTab = 'Likes'">Likes</div>
+          <div class="tab"
+               :style="tabStyle.following"
+               @click="activeTab = 'Following'">Following</div>
+          <div class="tab"
+               :style="tabStyle.followers + ';border-right:0'"
+               @click="activeTab = 'Followers'">Followers</div>
         </div>
         <div style="clear:both"></div>
       </div>
@@ -37,6 +35,12 @@
 <script>
 
 export default {
+  data() {
+    return {
+      tabStyle: { tracks: 'color:white;font-weight:bold' },
+      activeTab: 'Tracks',
+    };
+  },
   props: {
     profileData: {
       type: Object,
@@ -57,6 +61,27 @@ export default {
       return false;
     },
   },
+  watch: {
+    activeTab(val) {
+      const style = 'color:white;font-weight:bold';
+      switch (val) {
+        case 'Tracks':
+          this.tabStyle = { tracks: style };
+          break;
+        case 'Likes':
+          this.tabStyle = { likes: style };
+          break;
+        case 'Following':
+          this.tabStyle = { following: style };
+          break;
+        case 'Followers':
+          this.tabStyle = { followers: style };
+          break;
+        default: this.tabStyle = {};
+      }
+      this.$emit(`show${val}`);
+    },
+  },
   methods: {
     follow() {
       if (this.followed) {
@@ -71,6 +96,9 @@ export default {
         });
       }
       this.$store.dispatch('people/loadProfileData', this.profileData.data.username);
+    },
+    activateTab(tab) {
+      this.activeTab = tab;
     },
   },
 };
@@ -97,12 +125,13 @@ export default {
   top: 15px;
   left: 200px;
 }
-.follow {
+.tab {
   display: inline-block;
   color: #f0f0f0;
   text-align: center;
   padding: 0 20px;
   cursor: pointer;
+  border-right: 1px solid #ffffff;
 }
 .follow:hover {
   color: #ffffff;

@@ -87,6 +87,15 @@ export default {
       axios.get(`people/${id}`)
         .then(result => commit('ADD_PERSONS_DATA', result.data))
         .catch(() => dispatch('sendNote', { message: 'Person not found.' }, { root: true }));
+      /*
+      const result = await axios.get(`people/${id}`);
+      try {
+        commit('ADD_PERSONS_DATA', result.data);
+      } catch (err) {
+        dispatch('sendNote', { message: 'Person not found.' }, { root: true });
+      }
+      return result.data;
+      */
     },
 
     loadProfileData({ commit }, username) {
