@@ -6,8 +6,14 @@
            @click="open">
       </div>
       <div class="track-detail">
-        {{ trackData.data.name }}
-        <span class="small-text" style="color:#aaaaaa">by {{ artistData.data.name }}</span>
+        <div style="cursor:pointer;display:inline;margin-right:5px"
+             @click="open">{{ trackData.data.name }}</div>
+        <span class="small-text">by</span>
+        <span class="small-text" @click="loadPersonalData">
+          <router-link :to="`/${artistData.data.username}`">
+            {{ artistData.data.name }}
+          </router-link>
+        </span>
       </div>
     </div>
     <track-player :file="trackUrl" class="vue-audio" autoPlay />
@@ -37,7 +43,10 @@ export default {
   },
   methods: {
     open() {
-      this.$router.push(`${this.artistData.data.username}/${this.currentTrackId}`);
+      this.$router.push(`/${this.artistData.data.username}/${this.currentTrackId}`);
+    },
+    loadPersonalData() {
+      this.$store.dispatch('people/loadProfileData', this.artistData.data.username);
     },
   },
 };
@@ -48,7 +57,7 @@ export default {
   background: #f0f0f0;
   border-top: 1px solid #cccccc;
   display: grid;
-  grid-template-columns: auto 250px 500px auto;
+  grid-template-columns: auto 250px 600px auto;
   padding: 5px 0;
 }
 .vue-audio {
@@ -74,5 +83,11 @@ export default {
   grid-column: 2;
   padding-top: 10px;
   min-width: 200px;
+}
+.track-detail span, .track-detail a {
+  color:#aaaaaa;
+}
+.track-detail a:hover {
+  text-decoration: underline;
 }
 </style>

@@ -1,26 +1,28 @@
 <template>
   <div :class="`${classes}-wrapper`">
     <div :class="`${classes}__player`">
-      <a @click="stop()" title="Stop" class="icon-stop2" ></a>
-      <a @click="pause()" title="Play" :class="[ paused ? 'icon-play3' : 'icon-pause2' ]"></a>
+      <!--<a @click="stop()" title="Stop" class="icon-stop2"></a>//-->
+      <a @click="pause()" title="Play" :class="[paused ? 'icon-play3' : 'icon-pause2']"></a>
       <div v-on:click="setPosition"
            :class="`${classes}__playback-time-wrapper`"
            title="Time played : Total time">
           <div v-bind:style="progressStyle" :class="`${classes}__playback-time-indicator`"></div>
-          <span :class="`${classes}__playback-time-current`">{{currentTime}}</span>
-          <span :class="`${classes}__playback-time-separator`"></span>
-          <span :class="`${classes}__playback-time-total`">{{duration}}</span>
+          <span :class="`${classes}__playback-time-current`">{{ currentTime }}</span>
+          <!--<span :class="`${classes}__playback-time-separator`"></span>//-->
+          <span :class="`${classes}__playback-time-total`">{{ duration }}</span>
+          <span style="clear: both"></span>
       </div>
       <div :class="`${classes}__extern-wrapper`">
-        <a @click="download()" class="icon-download"></a>
+        <!--<a @click="download()" class="icon-download"></a>//-->
         <a @click="changeLoop()"
-           :class="[ innerLoop ? 'icon-spinner10' : 'icon-spinner11']"></a>
+           :class="[innerLoop ? 'icon-spinner10' : 'icon-spinner11']"></a>
         <a @click="mute()"
-           :class="[isMuted ? 'icon-volume-mute2': 'icon-volume-high' ]"
+           :class="[isMuted ? 'icon-volume-mute2': 'icon-volume-high']"
            title="Mute"></a>
-        <a v-on:mouseover="toggleVolume()"
+        <!--<a v-on:mouseover="toggleVolume()"
            class="volume-toggle icon-paragraph-justify"
-           title="Volume">
+           title="Volume">//-->
+        <a>
           <input orient="vertical"
                  v-model.lazy="volumeValue"
                  v-on:change="updateVolume()"
@@ -55,6 +57,7 @@
         cursor: pointer;
         display: inline-block;
         vertical-align: middle;
+        margin: 0 5px;
       }
 
       .#{$prefixCls}__extern-wrapper {
@@ -82,7 +85,7 @@
       .#{$prefixCls}__playback-time-wrapper {
         background: transparent;
         position: relative;
-        width: 250px;
+        width: 300px;
         display: inline-block;
         background: #e0dcd7;
         height: 3px;
@@ -95,11 +98,11 @@
         }
 
         .#{$prefixCls}__playback-time-total {
-
+          float:right;
         }
 
         .#{$prefixCls}__playback-time-indicator {
-            background: #5099ff;
+            background: #199999;
             position: absolute;
             top: 0;
             left: 0;

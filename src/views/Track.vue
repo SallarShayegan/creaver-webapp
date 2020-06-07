@@ -6,18 +6,30 @@
         <div class="track-image"
             :style="`background-image:url('${trackData.imageUrl}');`">
         </div>
-        {{ trackData.data.name }}<br>
-        <span class="small-text">
-        {{ trackData.data.discription }}<br><br>
+        <div style="font-wight: bold">{{ trackData.data.name }}</div>
+        <div class="small-text">{{ trackData.data.discription }}</div>
+
+        <div style="height: 30px"></div>
+
+        <div class="small-text">
         Artist: <router-link :to="`/${artistData.data.username}`">
                 {{ artistData.data.name }}
                 </router-link><br>
-        Genre: {{ trackData.data.genre }}<br>
-        Creation place: {{ trackData.data.place }}
-        </span>
-        <br><br>
+        </div>
+        <div class="small-text" v-if="trackData.data.genre">
+          Genre: <span class="faded">{{ trackData.data.genre }}</span>
+        </div>
+        <div class="small-text" v-if="trackData.data.place">
+          Creation Place: <span class="faded">{{ trackData.data.place }}</span>
+        </div>
+        <div class="small-text" v-if="trackData.sharing_date">
+          Release Date: <span class="faded">{{ trackData.sharing_date }}</span>
+        </div>
+
+        <div style="height: 30px"></div>
+
         <h4>Comments (0)</h4>
-        <div class="track-comments">
+        <div class="track-comments faded">
           no comments yet
         </div>
       </div>
@@ -41,9 +53,14 @@ export default {
   destroyed() {
     this.$store.commit('tracks/RESET_TRACK_DATA');
   },
+  watch: {
+    trackData(val) {
+      this.$store.dispatch('people/getPersonalDataById', val.artist_id);
+    },
+  },
   computed: {
     trackData() {
-      return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || { data: {}, likes: [] };
+      return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || { data: {}, likes: [], artist_id: '' };
     },
     artistData() {
       return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
@@ -68,6 +85,9 @@ export default {
   grid-column: 1;
   padding: 30px 60px 30px 0;
 }
+.infobar div {
+  padding: 2px 0;
+}
 .track-image {
   width: 150px;
   height: 150px;
@@ -77,7 +97,9 @@ export default {
 }
 .track-comments {
   font-size: 11pt;
-  color:#cccccc;
+}
+.faded {
+  color:#b0b0b0;
 }
 .visubar {
   grid-column: 2;

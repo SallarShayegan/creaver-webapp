@@ -30,6 +30,7 @@
 <script>
 import { mapState } from 'vuex';
 import { setTimeout } from 'timers';
+import EventBus from '../EventBus';
 
 export default {
   props: {
@@ -75,6 +76,7 @@ export default {
   methods: {
     play() {
       if (!this.editClicked && !this.likeClicked) {
+        if (this.id !== this.currectTrackId) EventBus.$emit('trackSelected');
         this.$router.push(`${this.artistData.data.username}/${this.id}`);
       }
     },
@@ -99,7 +101,10 @@ export default {
       if (this.noBorder) return 'no-border';
       return '';
     },
-    ...mapState({ auth: state => state.auth.auth }),
+    ...mapState({
+      auth: state => state.auth.auth,
+      currectTrackId: state => state.tracks.currentTrackId,
+    }),
   },
 };
 </script>

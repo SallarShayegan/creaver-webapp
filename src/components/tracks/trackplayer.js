@@ -1,3 +1,5 @@
+import EventBus from '../EventBus';
+
 export const baseVolumeValue = 7.5;
 
 export const prefixCls = 'vue-sound';
@@ -53,7 +55,7 @@ export default {
       innerLoop: undefined,
       audio: undefined,
       totalDuration: 0,
-      hideVolumeSlider: false,
+      hideVolumeSlider: true,
       volumeValue: baseVolumeValue,
     };
   },
@@ -70,7 +72,7 @@ export default {
       this.audio.currentTime = parseInt(this.audio.duration * seekPos, 10);
     },
     updateVolume() {
-      this.hideVolumeSlider = false;
+      // this.hideVolumeSlider = false;
       this.audio.volume = this.volumeValue / 100;
       if (this.volumeValue / 100 > 0) {
         this.isMuted = false;
@@ -83,7 +85,7 @@ export default {
       }
     },
     toggleVolume() {
-      this.hideVolumeSlider = true;
+      // this.hideVolumeSlider = true;
     },
     stop() {
       this.playing = false;
@@ -151,6 +153,11 @@ export default {
     getAudio() {
       return this.$el.querySelectorAll('audio')[0];
     },
+  },
+  created() {
+    EventBus.$on('trackSelected', () => {
+      this.stop();
+    });
   },
   mounted() {
     this.uuid = generateUUID();

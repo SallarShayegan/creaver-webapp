@@ -4,6 +4,9 @@ const placeholder = '/placeholders/track.png';
 function imageUrl(id) {
   return `http://localhost:3000/images/tracks/${id}.jpg`;
 }
+function trackUrl(id) {
+  return `http://localhost:3000/tracks/${id}.mp3`;
+}
 
 export default {
   namespaced: true,
