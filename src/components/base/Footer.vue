@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <div>All rights not reserved!:) MuteRave @2020</div>
+    <div>No rights reserved!:p MuteRave @2020</div>
   </div>
 </template>
 
