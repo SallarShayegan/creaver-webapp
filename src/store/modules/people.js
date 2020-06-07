@@ -15,6 +15,7 @@ export default {
       tracks: [],
       following: [],
       followers: [],
+      likes: [],
       imageUrl: placeholder,
     },
     people: [],
