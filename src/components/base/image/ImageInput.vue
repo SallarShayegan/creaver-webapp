@@ -42,7 +42,7 @@
 
 <script>
 // import { createHash } from 'crypto';
-import { URL } from 'url';
+// import { URL } from 'url';
 import exifReader from './exifReader';
 
 export default {
@@ -191,8 +191,7 @@ export default {
         }
       };
       if (event) {
-        console.log(URL);
-        image.src = URL.createObjectURL(event.target.files[0]);
+        image.src = window.URL.createObjectURL(event.target.files[0]);
         const fileReader = new FileReader();
         fileReader.onload = (e) => {
           const orientation = exifReader(e.target.result).Orientation;

@@ -6,24 +6,35 @@
             v-model="editingData.data.username"
             placeholder="Username"
             validation="not-empty username"
+            :max="30"
+            @input="error = false"
+            @error="error = true"/>
+      <textbox
+            v-model="editingData.data.bio"
+            placeholder="Bio"
+            validation="bio"
+            :max="300"
             @input="error = false"
             @error="error = true"/>
       <textbox
             v-model="editingData.data.name"
             placeholder="Name"
             validation="not-empty"
+            :max="50"
             @input="error = false"
             @error="error = true"/>
       <textbox
             v-model="editingData.data.email"
             placeholder="Email address"
             validation="not-empty email"
+            :max="100"
             @input="error = false"
             @error="error = true"/>
       <textbox
             v-model="editingData.data.phone"
             placeholder="Phone number"
             validation="phone"
+            :max="20"
             @input="error = false"
             @error="error = true"/>
       <textbox

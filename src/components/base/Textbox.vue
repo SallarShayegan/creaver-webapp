@@ -10,9 +10,10 @@
            :placeholder="placeholder"
            ref="input"
            :class="borderColor"
+           :maxlength="max"
            @input="updateValue"
            @change="$emit('change')"
-           @blur="$emit('blur'); blured = true"/>
+           @blur="blur()"/>
     <div class="error color-red">
       {{ errors[0] }}
     </div>
@@ -29,6 +30,10 @@ export default {
     },
     placeholder: String,
     validation: String,
+    max: {
+      type: Number,
+      default: 30,
+    },
     disableInfo: {
       type: Boolean,
       default: false,
@@ -42,7 +47,11 @@ export default {
   methods: {
     updateValue() {
       this.blured = false;
-      this.$emit('input', this.$refs.input.value);
+      this.$emit('input', this.$refs.input.value.trim());
+    },
+    blur() {
+      this.$emit('blur');
+      this.blured = true;
     },
   },
   computed: {
@@ -66,11 +75,21 @@ export default {
       const errors = [];
       if (!this.blured) return errors;
       if (this.requirements.includes('not-empty') && !this.value) errors.push(`${this.placeholder} should not be empty`);
-      if (this.requirements.includes('email') && !this.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) errors.push('invalid email address');
-      if (this.requirements.includes('name') && !this.value.match(/^[a-zA-Z\s]*$/)) errors.push(`${this.placeholder} can only contain white space and letters`);
-      if (this.requirements.includes('username') && !this.value.match(/^[a-zA-Z0-9]+(\.{1}[a-zA-Z0-9]+)*$/)) errors.push(`${this.placeholder} can only contain letters, digits and dots`);
-      if (this.requirements.includes('phone') && !this.value.match(/\+{0,1}[0-9]+(\s{1}[0-9]+)*$/)) errors.push(`${this.placeholder} can only contain digits, white space and +`);
-
+      if (this.requirements.includes('email') && !this.value.match(/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/)) {
+        errors.push('invalid email address');
+      }
+      if (this.requirements.includes('name') && !this.value.match(/^[a-zA-Z\s]*$/)) {
+        errors.push(`${this.placeholder} can only contain white space and letters`);
+      }
+      if (this.requirements.includes('username') && !this.value.match(/^[a-zA-Z0-9]+(\.{1}[a-zA-Z0-9]+)*$/)) {
+        errors.push(`${this.placeholder} can only contain letters, digits and dots`);
+      }
+      if (this.requirements.includes('phone') && !this.value.match(/\+{0,1}[0-9]+(\s{1}[0-9]+)*$/)) {
+        errors.push(`${this.placeholder} can only contain digits, white space and +`);
+      }
+      if (this.requirements.includes('bio') && !this.value.match()) {
+        errors.push(`${this.placeholder} `);
+      }
       if (errors.length >= 1) this.$emit('error', errors);
       return errors;
     },
