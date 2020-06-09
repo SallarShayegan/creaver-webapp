@@ -2,7 +2,16 @@
   <div class="header">
       <div class="header-content">
         <div class="profile-image"
+             :style="`background-image:url('${profileData.imageUrl}')`"
+             @click="showAvatar = true"></div>
+        <modal :title="`${profileData.data.name}'s picture`"
+               :visible="showAvatar"
+               :formHeight="420"
+               :formWidth="420"
+               @close="showAvatar = false">
+          <div class="profile-image-big"
              :style="`background-image:url('${profileData.imageUrl}')`"></div>
+        </modal>
         <div class="info">
           <span style="color:#ffffff">{{ profileData.data.name }}</span>
           <span class="small-text" style="margin-left:20px;">
@@ -33,12 +42,17 @@
 </template>
 
 <script>
+import Modal from '@/components/base/Modal.vue';
 
 export default {
+  components: {
+    Modal,
+  },
   data() {
     return {
       tabStyle: { tracks: 'color:white;font-weight:bold' },
       activeTab: 'Tracks',
+      showAvatar: false,
     };
   },
   props: {
@@ -116,6 +130,14 @@ export default {
 }
 .profile-image {
   box-shadow: 0px 0px 10px white;
+  cursor: pointer;
+}
+.profile-image-big {
+  width: 400px;
+  height: 400px;
+  background-repeat: no-repeat;
+  display: inline-block;
+  background-position: center;
 }
 .abo {
   float: right;
