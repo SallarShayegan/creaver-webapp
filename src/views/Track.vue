@@ -35,7 +35,9 @@
       </div>
       <div class="visubar">
         <div class="visubox">
-          <div>Visuals</div>
+          <div>
+            <div class="play"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -70,6 +72,8 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '../style/variables';
+
 .container {
   display: grid;
   grid-template-columns: auto 1200px auto;
@@ -123,6 +127,17 @@ export default {
   grid-column: 2;
   color: #cccccc;
   font-size: 30pt;
+  text-align: center;
+}
+.play {
+  background: $primary url('../../public/play-white.png') no-repeat;
+  background-size: 70%;
+  background-position:  20px center;
+  box-shadow: 0px 0px 30px #030303;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
 .before-body {
   background: #f4f4f4;

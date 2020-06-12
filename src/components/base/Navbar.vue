@@ -1,10 +1,10 @@
 <template>
   <div class="navbar">
     <div class="logo-container">
-      <div class="logo"></div>
+      <router-link to="/"><div class="logo"></div></router-link>
     </div>
     <div class="brandname padding">
-      <router-link to="/" style="color:#ffffff">MuteRave</router-link>
+      <!--<router-link to="/" style="color:#ffffff">MuteRave</router-link>//-->
     </div>
     <div class="column right padding">
       <dropdown v-if="auth.token"
@@ -54,7 +54,7 @@ export default {
 
 .navbar {
   display: grid;
-  grid-template-columns: 50px auto 50%;
+  grid-template-columns: 200px auto 50%;
   background: $secondary;
   color: $tertiary;
 }
@@ -66,10 +66,10 @@ export default {
   padding-left: 20px;
 }
 .logo {
-  background-image: url('../../../public/logo.png');
-  width: 50px;
+  background: url('../../../public/logo.png') no-repeat;
+  width: 200px;
   height: 50px;
-  background-size: 100%;
+  background-size: contain;
   grid-column-start: 1;
   grid-column-end: 2;
 }
