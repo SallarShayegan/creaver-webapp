@@ -37,12 +37,12 @@
       <canvas id="canvas"></canvas>
     </div>
     <div style="clear:both"></div>
+
+      <canvas id="original"></canvas>
   </div>
 </template>
 
 <script>
-// import { createHash } from 'crypto';
-// import { URL } from 'url';
 import exifReader from './exifReader';
 
 export default {
@@ -166,27 +166,26 @@ export default {
     addFile(event, current) {
       const image = new Image();
       const canvas = document.getElementById('canvas');
+      const original = document.getElementById('original');
       const border = document.getElementById('border');
       canvas.style.display = 'block';
       if (event) border.style.display = 'grid';
 
       image.onload = () => {
         canvas.height = canvas.width * (image.height / image.width);
+        original.height = image.height;
+        original.width = image.width;
         this.canvas.height = canvas.height;
         this.canvas.width = canvas.width;
         const context = canvas.getContext('2d');
+        const originalContext = original.getContext('2d');
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        /*
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        context.save();
-        context.translate(canvas.width / 2, canvas.height / 2);
-        context.rotate(this.canvas.rotation * Math.PI / 180);
-        context.drawImage(image, 0, 0, -canvas.width / 2, -canvas.width / 2);
-        context.restore();
-        */
+        originalContext.drawImage(image, 0, 0, image.width, image.height);
+
         this.border.size = (canvas.width > canvas.height) ? canvas.height : canvas.width;
         if (event) {
-          this.canvas.src = canvas.toDataURL('image/jpeg');
+          // this.canvas.src = canvas.toDataURL('image/jpeg');
+          this.canvas.src = original.toDataURL('image/jpeg');
           this.prepareImage();
         }
       };
@@ -219,15 +218,29 @@ export default {
     prepareImage() {
       // Build cropped image:
       const canvas = document.createElement('canvas');
+      const original = document.getElementById('original');
       const cropped = new Image();
 
       cropped.onload = () => {
+        /*
         canvas.height = this.border.size;
         canvas.width = this.border.size;
         const context = canvas.getContext('2d');
         context.drawImage(cropped, this.border.left, this.border.top,
           this.border.size, this.border.size,
           0, 0, this.border.size, this.border.size);
+        */
+        const left = this.border.left * original.width / this.canvas.width;
+        const top = this.border.top * original.height / this.canvas.height;
+
+        const size = this.border.size * original.width / canvas.width;
+        canvas.width = 400;
+        canvas.height = 400;
+
+        const context = canvas.getContext('2d');
+        context.drawImage(cropped, left, top,
+          size, size,
+          0, 0, 400, 400);
 
         canvas.toBlob((blob) => {
           const imageFile = new FormData();
@@ -275,6 +288,9 @@ export default {
 #canvas {
   display: block;
   background: #f0f0f0;
+}
+#original {
+  display: none;
 }
 #border {
   position: absolute;
