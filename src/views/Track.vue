@@ -23,7 +23,7 @@
           Creation Place: <span class="faded">{{ trackData.data.place }}</span>
         </div>
         <div class="small-text" v-if="trackData.sharing_date">
-          Release Date: <span class="faded">{{ trackData.sharing_date }}</span>
+          Release Date: <span class="faded">{{ trackData.sharing_date | date }}</span>
         </div>
 
         <div style="height: 30px"></div>

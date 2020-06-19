@@ -13,6 +13,7 @@ export default {
       data: {},
       id: '',
       following: [],
+      likes: [],
     },
   },
 

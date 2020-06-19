@@ -93,6 +93,10 @@ textarea {
   background: $green_dark;
 }
 
+.faded {
+  color: #cccccc;
+}
+
 .container {
   display: grid;
   grid-template-columns: auto 600px auto;
