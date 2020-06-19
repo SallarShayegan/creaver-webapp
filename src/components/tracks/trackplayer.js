@@ -42,6 +42,9 @@ export default {
     classes() {
       return prefixCls;
     },
+    finished() {
+      return this.duration === this.currentTime;
+    },
   },
   data() {
     return {
@@ -94,7 +97,8 @@ export default {
       this.audio.currentTime = 0;
     },
     play() {
-      if (this.playing && !this.paused) return;
+      // don't know why next line was written
+      // if (this.playing && !this.paused) return;
       this.paused = false;
       this.audio.play();
       this.playing = true;
@@ -153,6 +157,9 @@ export default {
     getAudio() {
       return this.$el.querySelectorAll('audio')[0];
     },
+    playNext() {
+
+    },
   },
   created() {
     EventBus.$on('trackSelected', () => {
@@ -173,5 +180,9 @@ export default {
     this.audio.removeEventListener('play', this._handlePlayPause);
     /* eslint-enable */
   },
-
+  watch: {
+    finished(val) {
+      if (val && this.duration !== '00:00') this.$emit('finished');
+    },
+  },
 };

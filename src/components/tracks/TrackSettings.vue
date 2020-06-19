@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Edit track</h3>
-    <track-input @input="editedData = $event"
+    <track-input @input="setEditedData($event)"
                  :editingTrack="currentData"
                  @removeClicked="deleteTrack"
                  @imageRemoved="deleteImage = true"/>
@@ -51,7 +51,7 @@ export default {
       if (this.editedData.image) this.deleteImage = false;
       this.$store.dispatch('tracks/editTrack', {
         id: this.id,
-        newData: this.editedData.trackData,
+        newData: this.editedData,
         image: this.editedData.image,
         deleteImage: this.deleteImage,
       })
@@ -61,10 +61,14 @@ export default {
       this.$store.dispatch('tracks/deleteTrack', { id: this.id })
         .then(() => this.$emit('close'));
     },
+    setEditedData(data) {
+      this.editedData = data;
+      console.log(this.editedData);
+    },
   },
 };
 </script>
 
-<style>
+<style scoped>
 
 </style>

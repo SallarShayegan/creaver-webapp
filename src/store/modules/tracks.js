@@ -18,6 +18,7 @@ export default {
       imageUrl: placeholder,
     },
     currentTrackId: '',
+    trackOrder: [],
   },
   mutations: {
     ADD_TRACK(state, payload) {
@@ -61,10 +62,15 @@ export default {
       const track = state.tracks.filter(t => t.id === payload.id)[0];
       if (track) track.likes.splice(track.likes.indexOf(payload.auth_id), 1);
     },
+    SET_CURRENT_TRACK_ID(state, payload) {
+      // eslint-disable-next-line
+      state.currentTrackId = payload;
+    },
   },
   getters: {
     getTrackById: state => (id) => {
       const result = state.tracks.filter(track => track.id === id);
+      // if (result.length < 1) return actions.getTrackById(id);
       if (result.length < 1) return null;
       return result[0];
     },
@@ -89,9 +95,10 @@ export default {
     },
 
     async editTrack({ rootState, commit, dispatch }, data) {
-      await axios.put(`tracks/${data.id}`, { data: data.newData }, {
-        headers: { Authorization: rootState.auth.auth.token },
-      });
+      console.log(data);
+      await axios.put(`tracks/${data.id}`,
+        { data: { trackData: data.newData.trackData, nextTracks: data.newData.nextTracks } },
+        { headers: { Authorization: rootState.auth.auth.token } });
       if (data.image) {
         await dispatch('changeTrackImage', {
           id: data.id,
@@ -116,7 +123,10 @@ export default {
 
     getTrackById({ commit }, id) {
       axios.get(`tracks/${id}`)
-        .then(result => commit('ADD_TRACK', result.data))
+        .then((result) => {
+          commit('ADD_TRACK', result.data);
+          return result.data;
+        })
         .catch(err => console.log(err));
     },
 

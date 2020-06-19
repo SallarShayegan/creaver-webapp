@@ -5,21 +5,23 @@
                   width:${imageSize};height:${imageSize}`">
     </div>
     {{ trackData.data.name }}
+    <span class="small-text" v-if="oneLine">by {{ artistData.data.name }}</span>
     <span v-if="editable"
           class="edit-button"
           @click="editClicked = true; $emit('editClicked')">
       <i class="fas fa-pen"></i>
     </span>
     <div class="small-text faded" style="float:right">
-      <i class="fas fa-play"></i> {{ trackData.plays }}
+      <span v-if="!noPlays"><i class="fas fa-play"></i> {{ trackData.plays }}</span>
       <span @click="like" v-if="!noLike" style="margin-left:7px">
         <span id="like" :class="liked ? 'liked' : 'faded'">
           <i class="fas fa-heart"></i>
         </span>
         {{ trackData.likes.length }}
       </span>
+      <slot></slot>
     </div>
-    <div class="small-text">{{ artistData.data.name }}</div>
+    <div class="small-text" v-if="!oneLine">{{ artistData.data.name }}</div>
     <div class="small-text faded" v-if="!noDescription" style="margin-top:10px;">
       {{ trackData.data.discription }}
     </div>
@@ -50,12 +52,28 @@ export default {
       default: false,
       type: Boolean,
     },
+    noPlays: {
+      default: false,
+      type: Boolean,
+    },
     imageSize: {
       default: '70px',
       type: String,
     },
     noBorder: {
       default: false,
+      type: Boolean,
+    },
+    noOwnTracks: {
+      default: false,
+      type: Boolean,
+    },
+    oneLine: {
+      default: false,
+      type: Boolean,
+    },
+    openOnClick: {
+      default: true,
       type: Boolean,
     },
   },
@@ -75,7 +93,8 @@ export default {
   },
   methods: {
     play() {
-      if (!this.editClicked && !this.likeClicked) {
+      this.$emit('click');
+      if (!this.editClicked && !this.likeClicked && this.openOnClick) {
         if (this.id !== this.currectTrackId) EventBus.$emit('trackSelected');
         this.$router.push(`${this.artistData.data.username}/${this.id}`);
       }
@@ -89,13 +108,16 @@ export default {
   },
   computed: {
     trackData() {
-      return this.$store.getters['tracks/getTrackById'](this.id) || { data: {}, likes: [] };
+      return this.$store.getters['tracks/getTrackById'](this.id) || { data: {}, likes: [], artist_id: '' };
     },
     liked() {
       return this.trackData.likes.includes(this.auth.id);
     },
     artistData() {
       return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
+    },
+    isOwnTrack() {
+      return this.trackData.artist_id === this.auth.auth.id;
     },
     border() {
       if (this.noBorder) return 'no-border';
@@ -114,9 +136,6 @@ export default {
 
 #like {
   cursor: pointer;
-}
-.faded {
-  color: #cccccc;
 }
 .liked {
   color: $primary;

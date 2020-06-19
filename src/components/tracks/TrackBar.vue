@@ -16,7 +16,11 @@
         </span>
       </div>
     </div>
-    <track-player :file="trackUrl" class="vue-audio" autoPlay />
+    <track-player :file="trackUrl"
+                  class="vue-audio"
+                  autoPlay
+                  ref="player"
+                  @finished="playNext" />
   </div>
 </template>
 
@@ -29,15 +33,22 @@ export default {
   },
   computed: {
     trackData() {
+      this.$store.dispatch('tracks/getTrackById', this.currentTrackId);
       return this.$store.getters['tracks/getTrackById'](this.currentTrackId) || { data: {}, likes: [] };
     },
     trackUrl() {
       return `http://localhost:3000/tracks/${this.currentTrackId}.mp3`;
     },
-    currentTrackId() {
-      return this.$store.state.tracks.currentTrackId;
+    currentTrackId: {
+      get() {
+        return this.$store.state.tracks.currentTrackId;
+      },
+      set(id) {
+        this.$store.commit('tracks/SET_CURRENT_TRACK_ID', id);
+      },
     },
     artistData() {
+      if (this.trackData.artist_id) this.$store.dispatch('people/getPersonalDataById', this.trackData.artist_id);
       return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
     },
   },
@@ -47,6 +58,15 @@ export default {
     },
     loadPersonalData() {
       this.$store.dispatch('people/loadProfileData', this.artistData.data.username);
+    },
+    playNext() {
+      const nextTracks = this.trackData.next_id;
+      // choosing random next Track
+      if (nextTracks) {
+        const trackIndex = Math.floor(Math.random() * nextTracks.length);
+        this.currentTrackId = nextTracks[trackIndex];
+        this.$refs.player.play();
+      }
     },
   },
 };

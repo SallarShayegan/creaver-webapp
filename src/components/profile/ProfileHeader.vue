@@ -6,7 +6,8 @@
              @click="showAvatar = true"></div>
         <modal :title="`${profileData.data.name}'s picture`"
                :visible="showAvatar"
-               :formHeight="420"
+               centered
+               :formHeight="430"
                :formWidth="420"
                @close="showAvatar = false">
           <div class="profile-image-big"

@@ -11,7 +11,7 @@
           </span>
           <div style="clear:both"></div>
         </div>
-        <div class="content" :style="contentSize">
+        <div class="content" :style="contentStyle">
           <slot></slot>
         </div>
       </div>
@@ -27,6 +27,10 @@ export default {
     };
   },
   props: {
+    centered: {
+      type: Boolean,
+      default: false,
+    },
     visible: {
       default: false,
       type: Boolean,
@@ -61,9 +65,11 @@ export default {
       return `grid-template-columns: auto ${this.formWidth}px auto;
               grid-template-rows: auto ${this.formHeight + 30}px auto`;
     },
-    contentSize() {
+    contentStyle() {
+      const centered = (this.centered) ? ';display:table-cell;vertical-align:middle;text-align:center;' : '';
       return `width: ${this.formWidth}px;
-              height: ${this.formHeight}px`;
+              height: ${this.formHeight}px
+              ${centered}`;
     },
   },
 };
@@ -104,9 +110,6 @@ export default {
   border-bottom: 1px solid #eee;
 }
 .content {
-  display: table-cell;
-  vertical-align: middle;
-  text-align: center;
-  overflow: hidden;
+  overflow: scroll;
 }
 </style>
