@@ -1,4 +1,4 @@
-# musection-webapp
+# creaver-webapp
 
 ## Project setup
 ```
