@@ -30,7 +30,7 @@
 
         <h4>Comments (0)</h4>
         <div class="track-comments faded">
-          no comments yet
+          no comments yet.
         </div>
       </div>
       <div class="visubar">
