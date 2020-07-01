@@ -10,9 +10,10 @@ function imageUrl(id) {
 export default {
   state: {
     auth: {
-      data: {},
+      profile_data: {},
       id: '',
       following: [],
+      followers: [],
       likes: [],
     },
   },
@@ -44,7 +45,7 @@ export default {
         .then((result) => {
           commit('SET_AUTH_DATA', result.data);
           localStorage.setItem('accessToken', result.data.token);
-          router.push(`/${result.data.data.username}`);
+          router.push(`/${result.data.profile_data.username}`);
         })
         .catch(() => dispatch('sendNote', { message: 'Ups... Wrong login data!' }, { root: true }));
     },
@@ -52,7 +53,7 @@ export default {
     // Logs person out
     logout({ commit }) {
       localStorage.setItem('accessToken', null);
-      commit('SET_AUTH_DATA', { data: {}, id: '' });
+      commit('SET_AUTH_DATA', { profile_data: {}, id: '' });
     },
 
     // Fetches localStorage to get token

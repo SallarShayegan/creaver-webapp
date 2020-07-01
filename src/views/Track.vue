@@ -12,8 +12,8 @@
         <div style="height: 30px"></div>
 
         <div class="small-text">
-        Artist: <router-link :to="`/${artistData.data.username}`">
-                {{ artistData.data.name }}
+        Artist: <router-link :to="`/${artistData.profile_data.username}`">
+                {{ artistData.profile_data.name }}
                 </router-link><br>
         </div>
         <div class="small-text" v-if="trackData.data.genre">
@@ -65,7 +65,7 @@ export default {
       return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || { data: {}, likes: [], artist_id: '' };
     },
     artistData() {
-      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
+      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { profile_data: {} };
     },
   },
 };

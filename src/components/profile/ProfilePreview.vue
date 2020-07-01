@@ -2,7 +2,7 @@
   <div class="profile-preview" @click="showProfile">
     <div class="profile-image"
          :style="`background-image:url('${profileData.imageUrl}')`"></div>
-    {{ profileData.data.name }}
+    {{ profileData.profile_data.name }}
     <div class="abo" v-if="auth.id !== profileData.id">
       <button @click="follow" @blur="followClicked = false">
         Follow{{ (followed) ? 'ed' : '' }}
@@ -42,7 +42,7 @@ export default {
       }
     },
     showProfile() {
-      const { username } = this.profileData.data;
+      const { username } = this.profileData.profile_data;
       if (!this.followClicked) {
         this.$store.dispatch('people/loadProfileData', username)
           .then(() => {
@@ -55,7 +55,7 @@ export default {
   computed: {
     profileData() {
       if (this.profile) return this.profile;
-      return this.$store.getters['people/getPersonalDataById'](this.id) || { data: {} };
+      return this.$store.getters['people/getPersonalDataById'](this.id) || { profile_data: {} };
     },
     followed() {
       if (this.auth.following) return this.auth.following.includes(this.profileData.id);

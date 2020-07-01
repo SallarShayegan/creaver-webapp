@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     userRoute() {
-      return this.$store.state.auth.auth.data.username;
+      return this.$store.state.auth.auth.profile_data.username;
     },
   },
 };

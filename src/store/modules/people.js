@@ -9,13 +9,14 @@ function imageUrl(id) {
 export default {
   namespaced: true,
   state: {
-    profileData: {
-      data: {},
+    profile: {
+      profile_data: {},
       id: '',
       tracks: [],
       following: [],
       followers: [],
       likes: [],
+      reg_date: '',
       imageUrl: placeholder,
     },
     people: [],
@@ -41,29 +42,31 @@ export default {
       payload.imageUrl = (payload.hasImage) ? imageUrl(payload.id) : placeholder;
 
       // eslint-disable-next-line
-      state.profileData = payload;
+      state.profile = payload;
     },
     RESET_PROFILE_DATA(state) {
       // eslint-disable-next-line
-      state.profileData = {
-        data: {},
+      state.profile = {
+        profile_data: {},
         id: '',
         tracks: [],
         following: [],
         followers: [],
+        likes: [],
+        reg_date: '',
         imageUrl: placeholder,
       };
     },
     ADD_FOLLOWER(state, payload) {
-      if (state.profileData.id === payload.following_id
-        && !state.profileData.followers.includes(payload.follower_id)) {
-        state.profileData.followers.push(payload.follower_id);
+      if (state.profile.id === payload.following_id
+        && !state.profile.followers.includes(payload.follower_id)) {
+        state.profile.followers.push(payload.follower_id);
       }
     },
     REMOVE_FOLLOWER(state, payload) {
-      if (state.profileData.id === payload.following_id) {
-        const index = state.profileData.followers.indexOf(payload.follower_id);
-        state.profileData.followers.splice(index, 1);
+      if (state.profile.id === payload.following_id) {
+        const index = state.profile.followers.indexOf(payload.follower_id);
+        state.profile.followers.splice(index, 1);
       }
     },
   },
@@ -115,7 +118,7 @@ export default {
     },
 
     async changePersonalData({ rootState, dispatch }, data) {
-      await axios.put('auth/edit-profile', { data: data.data }, {
+      await axios.put('auth/edit-profile', { data: data.profile_data }, {
         headers: { Authorization: rootState.auth.auth.token },
       });
       if (data.image) {

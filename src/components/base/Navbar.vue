@@ -8,10 +8,10 @@
     </div>
     <div class="column right padding">
       <dropdown v-if="auth.token"
-                :text="`Yo ${auth.data.name}!`"
+                :text="`Yo ${auth.profile_data.name}!`"
                 class="float-right dropdown">
         <router-link to="/settings">Settings</router-link>
-        <router-link :to="`/${auth.data.username}`">
+        <router-link :to="`/${auth.profile_data.username}`">
           <div @click="loadPersonalData">Profile</div>
         </router-link>
         <router-link to="/login">
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     loadPersonalData() {
-      this.$store.dispatch('people/loadProfileData', this.auth.data.username);
+      this.$store.dispatch('people/loadProfileData', this.auth.profile_data.username);
     },
     logout() {
       this.$store.dispatch('logout');

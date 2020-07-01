@@ -14,10 +14,10 @@ export default {
   },
   computed: {
     likes() {
-      return this.$store.state.people.profileData.likes || [];
+      return this.$store.state.people.profile.likes || [];
     },
     name() {
-      return this.$store.state.people.profileData.data.name || 'kir';
+      return this.$store.state.people.profile.profile_data.name || '';
     },
   },
 };

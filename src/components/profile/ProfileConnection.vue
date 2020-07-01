@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h3 style="float:left">{{ profileData.data.name }}'s {{ type }} ({{ list.length }})</h3>
+    <h3 style="float:left">{{ profile.profile_data.name }}'s {{ type }} ({{ list.length }})</h3>
     <div class="float-right" style="margin-top:20px">
       <!--
       <button @click="$emit('close')"
@@ -8,7 +8,9 @@
               style="margin-right: 10px;">Close</button>//-->
     </div>
     <div style="clear:both"></div>
-    <span v-if="list.length < 1">{{ profileData.data.name }} hasn't got any {{ type }} yet.</span>
+    <span v-if="list.length < 1">
+      {{ profile.profile_data.name }} hasn't got any {{ type }} yet.
+    </span>
     <div v-for="person in list" :key="person">
       <profile-preview :id="person" @click="$emit('close');"/>
     </div>
@@ -23,13 +25,13 @@ export default {
     ProfilePreview,
   },
   props: {
-    profileData: Object,
+    profile: Object,
     type: String,
   },
   computed: {
     list() {
-      if (this.type === 'followers') return this.profileData.followers;
-      if (this.type === 'following') return this.profileData.following;
+      if (this.type === 'followers') return this.profile.followers;
+      if (this.type === 'following') return this.profile.following;
       return [];
     },
   },

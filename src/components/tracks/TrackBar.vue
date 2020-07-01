@@ -10,8 +10,8 @@
              @click="open">{{ trackData.data.name }}</div>
         <span class="small-text">by</span>
         <span class="small-text" @click="loadPersonalData">
-          <router-link :to="`/${artistData.data.username}`">
-            {{ artistData.data.name }}
+          <router-link :to="`/${artistData.profile_data.username}`">
+            {{ artistData.profile_data.name }}
           </router-link>
         </span>
       </div>
@@ -49,15 +49,15 @@ export default {
     },
     artistData() {
       if (this.trackData.artist_id) this.$store.dispatch('people/getPersonalDataById', this.trackData.artist_id);
-      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { data: {} };
+      return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { profile_data: {} };
     },
   },
   methods: {
     open() {
-      this.$router.push(`/${this.artistData.data.username}/${this.currentTrackId}`);
+      this.$router.push(`/${this.artistData.profile_data.username}/${this.currentTrackId}`);
     },
     loadPersonalData() {
-      this.$store.dispatch('people/loadProfileData', this.artistData.data.username);
+      this.$store.dispatch('people/loadProfileData', this.artistData.profile_data.username);
     },
     playNext() {
       const nextTracks = this.trackData.next_id;

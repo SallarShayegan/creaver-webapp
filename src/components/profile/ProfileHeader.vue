@@ -2,23 +2,23 @@
   <div class="header">
       <div class="header-content">
         <div class="profile-image"
-             :style="`background-image:url('${profileData.imageUrl}')`"
+             :style="`background-image:url('${profile.imageUrl}')`"
              @click="showAvatar = true"></div>
-        <modal :title="`${profileData.data.name}'s picture`"
+        <modal :title="`${profile.profile_data.name}'s picture`"
                :visible="showAvatar"
                centered
                :formHeight="430"
                :formWidth="420"
                @close="showAvatar = false">
           <div class="profile-image-big"
-             :style="`background-image:url('${profileData.imageUrl}')`"></div>
+             :style="`background-image:url('${profile.imageUrl}')`"></div>
         </modal>
         <div class="info">
-          <span style="color:#ffffff">{{ profileData.data.name }}</span>
+          <span style="color:#ffffff">{{ profile.profile_data.name }}</span>
           <span class="small-text" style="margin-left:20px;">
-            {{ (profileData.data.city || '')
-            + (profileData.data.city ? ', ' : '')
-            + (profileData.data.country || '') }}
+            {{ (profile.profile_data.city || '')
+            + (profile.profile_data.city ? ', ' : '')
+            + (profile.profile_data.country || '') }}
           </span>
         </div>
         <button v-if="isOwnProfile"
@@ -57,21 +57,21 @@ export default {
     };
   },
   props: {
-    profileData: {
+    profile: {
       type: Object,
       required: true,
     },
   },
   computed: {
     followed() {
-      return this.profileData.followers.filter(id => this.auth.id === id).length !== 0;
+      return this.profile.followers.filter(id => this.auth.id === id).length !== 0;
     },
     auth() {
       return this.$store.state.auth.auth;
     },
     isOwnProfile() {
       if (this.auth.token) {
-        return this.$store.state.people.profileData.id === this.auth.id;
+        return this.$store.state.people.profile.id === this.auth.id;
       }
       return false;
     },
@@ -102,15 +102,15 @@ export default {
       if (this.followed) {
         this.$store.dispatch('people/unfollow', {
           follower_id: this.auth.id,
-          following_id: this.profileData.id,
+          following_id: this.profile.id,
         });
       } else {
         this.$store.dispatch('people/follow', {
           follower_id: this.auth.id,
-          following_id: this.profileData.id,
+          following_id: this.profile.id,
         });
       }
-      this.$store.dispatch('people/loadProfileData', this.profileData.data.username);
+      this.$store.dispatch('people/loadProfileData', this.profile.profile_data.username);
     },
     activateTab(tab) {
       this.activeTab = tab;

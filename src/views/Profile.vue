@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="before-header"></div>
-    <profile-header :profileData="profileData"
+    <profile-header :profile="profile"
                     ref="header"
                     @editClicked="viewPort = 'editProfile';"
                     @showTracks="viewPort = 'tracks'"
@@ -20,13 +20,13 @@
           </div>
           <div style="clear:both"></div>
           <div>
-            <div v-for="track in profileData.tracks" :key="track">
+            <div v-for="track in profile.tracks" :key="track">
               <track-preview :id="track"
                             @editClicked="viewPort = 'editTrack'; editingTrack = track"
                             :editable="isOwnProfile"/>
             </div>
-            <div v-if="!profileData.tracks || profileData.tracks.length < 1">
-              {{ profileData.data.name }} hasn't added any tracks yet!
+            <div v-if="!profile.tracks || profile.tracks.length < 1">
+              {{ profile.profile_data.name }} hasn't added any tracks yet!
             </div>
           </div>
         </div>
@@ -40,12 +40,12 @@
                       @close="viewPort = 'tracks'; $refs.header.activateTab('Tracks')"/>
         <profile-connection v-if="viewPort === 'connection'"
                             :type="followType"
-                            :profileData="profileData"
+                            :profile="profile"
                             @close="viewPort = 'tracks'; $refs.header.activateTab('Tracks')"/>
       </div>
 
       <div class="sidebar">
-        <div class="bio">{{ profileData.data.bio }}</div>
+        <div class="bio">{{ profile.profile_data.bio }}</div>
         <h3>Recent likes</h3>
         <track-preview v-for="track in recentLikes"
                        :key="track"
@@ -54,7 +54,7 @@
                        noLike
                        imageSize="50px"/>
         <span v-if="recentLikes.length < 1">
-          {{ profileData.data.name }} hasn't liked any tracks yet.
+          {{ profile.profile_data.name }} hasn't liked any tracks yet.
         </span>
       </div>
 
@@ -100,16 +100,16 @@ export default {
     ...mapState({ auth: state => state.auth.auth }),
     isOwnProfile() {
       if (this.auth.token) {
-        return this.$store.state.people.profileData.id === this.auth.id;
+        return this.$store.state.people.profile.id === this.auth.id;
       }
       return false;
     },
-    profileData() {
+    profile() {
       if (this.isOwnProfile) return this.auth;
-      return this.$store.state.people.profileData;
+      return this.$store.state.people.profile;
     },
     recentLikes() {
-      const { likes } = this.profileData;
+      const { likes } = this.profile;
       if (!likes) return [];
       return likes.slice(-4, likes.length).reverse();
     },
@@ -118,7 +118,7 @@ export default {
     },
   },
   watch: {
-    profileData() {
+    profile() {
       this.viewPort = 'tracks';
       this.$refs.header.activateTab('Tracks');
     },

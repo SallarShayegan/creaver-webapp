@@ -3,35 +3,35 @@
     <h3>Edit profile</h3>
     <div style="float:left">
       <textbox
-            v-model="editingData.data.username"
+            v-model="editingData.profile_data.username"
             placeholder="Username"
             validation="not-empty username"
             :max="30"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.bio"
+            v-model="editingData.profile_data.bio"
             placeholder="Bio"
             validation="bio"
             :max="300"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.name"
+            v-model="editingData.profile_data.name"
             placeholder="Name"
             validation="not-empty"
             :max="50"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.email"
+            v-model="editingData.profile_data.email"
             placeholder="Email address"
             validation="not-empty email"
             :max="100"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.phone"
+            v-model="editingData.profile_data.phone"
             placeholder="Phone number"
             validation="phone"
             :max="20"
@@ -39,18 +39,18 @@
             @error="error = true"/>
       <textbox
             type="date"
-            v-model="editingData.data.birth_date"
+            v-model="editingData.profile_data.birth_date"
             placeholder="Date of birth"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.city"
+            v-model="editingData.profile_data.city"
             placeholder="City"
             validation="name"
             @input="error = false"
             @error="error = true"/>
       <textbox
-            v-model="editingData.data.country"
+            v-model="editingData.profile_data.country"
             placeholder="Country"
             validation="name"
             @input="error = false"
@@ -97,7 +97,7 @@ export default {
 
       this.$store.dispatch('people/changePersonalData', {
         id: this.editingData.id,
-        data: this.editingData.data,
+        profile_data: this.editingData.profile_data,
         image: this.profileImage,
         deleteImage: this.deleteImage,
       });
