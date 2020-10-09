@@ -17,21 +17,20 @@
                 </router-link><br>
         </div>
         <div class="small-text" v-if="trackData.data.genre">
-          Genre: <span class="faded">{{ trackData.data.genre }}</span>
+          Genre: <span class="faded-2">{{ trackData.data.genre }}</span>
         </div>
         <div class="small-text" v-if="trackData.data.place">
-          Creation Place: <span class="faded">{{ trackData.data.place }}</span>
+          Creation Place: <span class="faded-2">{{ trackData.data.place }}</span>
         </div>
         <div class="small-text" v-if="trackData.sharing_date">
-          Release Date: <span class="faded">{{ trackData.sharing_date | date }}</span>
+          Release Date: <span class="faded-2">{{ trackData.sharing_date | dd.mm.yyyy }}</span>
         </div>
 
         <div style="height: 30px"></div>
 
-        <h4>Comments (0)</h4>
-        <div class="track-comments faded">
-          no comments yet.
-        </div>
+        <track-comments :track_id="trackData.id"
+                        :comments="trackData.comments"
+                        :isOwnTrack="isOwnTrack" />
       </div>
       <div class="visubar">
         <div class="visubox">
@@ -46,7 +45,12 @@
 </template>
 
 <script>
+import TrackComments from '@/components/tracks/TrackComments.vue';
+
 export default {
+  components: {
+    TrackComments,
+  },
   beforeCreate() {
     const id = this.$route.params.trackId;
     this.$store.dispatch('tracks/getTrackById', id);
@@ -62,10 +66,15 @@ export default {
   },
   computed: {
     trackData() {
-      return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || { data: {}, likes: [], artist_id: '' };
+      return this.$store.getters['tracks/getTrackById'](this.$route.params.trackId) || {
+        id: '', data: {}, likes: [], comments: [], artist_id: '',
+      };
     },
     artistData() {
       return this.$store.getters['people/getPersonalDataById'](this.trackData.artist_id) || { profile_data: {} };
+    },
+    isOwnTrack() {
+      return this.trackData.artist_id === this.$store.state.auth.auth.id;
     },
   },
 };
@@ -98,12 +107,6 @@ export default {
   background: #f0f0f0;
   background-size: 100%;
   margin-bottom: 10px;
-}
-.track-comments {
-  font-size: 11pt;
-}
-.faded {
-  color:#b0b0b0;
 }
 .visubar {
   grid-column: 2;

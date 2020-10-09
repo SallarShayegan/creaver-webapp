@@ -15,6 +15,7 @@ export default {
     trackData: {
       id: '',
       data: {},
+      comments: [],
       imageUrl: placeholder,
     },
     currentTrackId: '',
@@ -65,6 +66,18 @@ export default {
     SET_CURRENT_TRACK_ID(state, payload) {
       // eslint-disable-next-line
       state.currentTrackId = payload;
+    },
+    ADD_COMMENT(state, payload) {
+      const track = state.tracks.filter(t => t.id === payload.id)[0];
+      if (track) track.comments.push(payload.comment);
+      if (state.trackData.id === payload.id) state.trackData.comments.push(payload);
+    },
+    UPDATE_COMMENTS(state, payload) {
+      const track = state.tracks.filter(t => t.id === payload.id)[0];
+      // eslint-disable-next-line
+      if (track) track.comments = payload.comments;
+      // eslint-disable-next-line
+      if (state.trackData.id === payload.id) state.trackData.comments = payload.comments;
     },
   },
   getters: {
@@ -161,6 +174,27 @@ export default {
       })
         .then(() => commit('REMOVE_LIKE', { id, auth_id: auth.id }))
         .then(() => auth.likes.splice(auth.likes.indexOf(id)))
+        .catch(err => console.log(err));
+    },
+
+    comment({ rootState, commit }, data) {
+      const { auth } = rootState.auth;
+      axios.post(`tracks/${data.id}/comment`, { comment: data.comment }, {
+        headers: { Authorization: auth.token },
+      })
+        .then(() => commit('ADD_COMMENT', data))
+        .catch(err => console.log(err));
+    },
+
+    deleteComment({ rootState, commit, dispatch }, data) {
+      const { auth } = rootState.auth;
+      axios.delete(`tracks/${data.id}/comment/${data.cm_id}`, {
+        headers: { Authorization: auth.token },
+      })
+        .then((res) => {
+          commit('UPDATE_COMMENTS', { id: data.id, comments: res.data.comments });
+          dispatch('sendNote', { type: 'info', message: res.data.message }, { root: true });
+        })
         .catch(err => console.log(err));
     },
 
